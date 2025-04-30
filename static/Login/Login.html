@@ -104,6 +104,7 @@ document.getElementById('loginForm').addEventListener('submit', async function (
           password,
           recaptcha_token: token
         })
+        console.log('Sending reCAPTCHA token:', token);
       });
 
       if (!response.ok) throw new Error('Login failed');
@@ -148,13 +149,15 @@ document.getElementById('registerForm').addEventListener('submit', async functio
           password,
           recaptcha_token: token
         })
+        console.log('Sending reCAPTCHA token:', token);
       });
 
       const data = await response.json();
 
-      if (response.ok) {
-        alert('Registered successfully! Please login.');
-        toggleForms();
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Response text:', errorText);
+        throw new Error('Login failed');
       } else {
         alert('Registration failed: ' + (data.detail?.[0]?.msg || 'Unknown error'));
       }
