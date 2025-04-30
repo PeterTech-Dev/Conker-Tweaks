@@ -17,7 +17,7 @@ ALGORITHM = os.getenv("ALGORITHM")
 RECAPTCHA_PROJECT_ID = os.getenv("RECAPTCHA_PROJECT_ID")
 RECAPTCHA_SECRET_KEY = os.getenv("RECAPTCHA_SECRET_KEY")
 RECAPTCHA_SITE_KEY = os.getenv("RECAPTCHA_SITE_KEY")
-RECAPTCHA_MIN_SCORE = float(os.getenv("RECAPTCHA_MIN_SCORE", "0.5"))
+RECAPTCHA_MIN_SCORE = os.getenv("RECAPTCHA_MIN_SCORE")
 
 auth_router = APIRouter()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
