@@ -75,7 +75,7 @@ def login_user(user: UserLogin, db: Session = Depends(get_db)):
     verify_recaptcha(
         token=user.recaptcha_token,
         secret_key=os.getenv("RECAPTCHA_SECRET_KEY"),
-        expected_action="register"
+        expected_action="login"
     )
     db_user = db.query(User).filter(User.email == user.email).first()
     if not db_user or not verify_password(user.password, db_user.hashed_password):
