@@ -1,28 +1,25 @@
-# recaptcha.py
-from google.cloud import recaptchaenterprise_v1
-from google.cloud.recaptchaenterprise_v1 import Assessment
+import requests
+from fastapi import HTTPException
 
-def create_assessment(project_id: str, recaptcha_key: str, token: str, recaptcha_action: str) -> Assessment:
-    client = recaptchaenterprise_v1.RecaptchaEnterpriseServiceClient()
+RECAPTCHA_VERIFY_URL = "https://www.google.com/recaptcha/api/siteverify"
+RECAPTCHA_MIN_SCORE = 0.7  # or adjust based on how strict you want it
 
-    event = recaptchaenterprise_v1.Event()
-    event.site_key = recaptcha_key
-    event.token = token
+def verify_recaptcha(token: str, secret_key: str, expected_action: str):
+    data = {
+        'secret': secret_key,
+        'response': token
+    }
 
-    assessment = recaptchaenterprise_v1.Assessment()
-    assessment.event = event
+    response = requests.post(RECAPTCHA_VERIFY_URL, data=data)
+    result = response.json()
 
-    request = recaptchaenterprise_v1.CreateAssessmentRequest(
-        assessment=assessment,
-        parent=f"projects/{project_id}"
-    )
+    if not result.get("success"):
+        raise HTTPException(status_code=400, detail="Invalid reCAPTCHA token.")
 
-    response = client.create_assessment(request)
+    if result.get("action") != expected_action:
+        raise HTTPException(status_code=400, detail="reCAPTCHA action mismatch.")
 
-    if not response.token_properties.valid:
-        raise ValueError("Invalid reCAPTCHA token: " + str(response.token_properties.invalid_reason))
+    if result.get("score", 0) < RECAPTCHA_MIN_SCORE:
+        raise HTTPException(status_code=400, detail="Low reCAPTCHA score — suspected bot.")
 
-    if response.token_properties.action != recaptcha_action:
-        raise ValueError("Unexpected reCAPTCHA action")
-
-    return response
+    return True
