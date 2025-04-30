@@ -28,6 +28,7 @@ class UserCreate(BaseModel):
 class UserLogin(BaseModel):
     email: EmailStr
     password: str
+    code: Optional[str] = None
 
 class UserResponse(BaseModel):
     id: int
