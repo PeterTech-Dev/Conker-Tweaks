@@ -59,18 +59,6 @@ def list_keys(product_id: int, db: Session = Depends(get_db), current_user: User
     keys = db.query(LicenseKey).filter(LicenseKey.product_id == product_id).all()
     return keys
 
-def save_payment(db, email: str, product_name: str, amount: float, payment_method: str):
-    new_payment = Payment(
-        email=email,
-        product_name=product_name,
-        amount=amount,
-        payment_method=payment_method
-    )
-    db.add(new_payment)
-    db.commit()
-    db.refresh(new_payment)
-    return new_payment
-
 @admin_router.get("/admin/users")
 def get_all_users(db: Session = Depends(get_db)):
     users = db.query(User).all()
