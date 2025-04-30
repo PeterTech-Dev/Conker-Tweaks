@@ -1,4 +1,3 @@
-# utils/recaptcha.py
 import requests
 
 def verify_recaptcha(token: str, secret_key: str, expected_action: str = None, min_score: float = 0.7):
