@@ -42,8 +42,8 @@ origins = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
     "http://localhost:8000",
-    "https://yourfrontenddomain.com",
-    "https://www.yourfrontenddomain.com",
+    "https://conkertweaks.com",
+    "https://conker-tweaks-production.up.railway.app",
 ]
 
 app.add_middleware(
