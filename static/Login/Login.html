@@ -93,7 +93,7 @@ Landing/Landing.html"
   </div>
 
   <script>
-let pendingLogin = null; // stores login creds if 2FA needed
+let pendingLogin = null;
 
 document.getElementById('loginForm').addEventListener('submit', async function (e) {
   e.preventDefault();
@@ -110,28 +110,26 @@ document.getElementById('loginForm').addEventListener('submit', async function (
 
     if (!loginRes.ok) {
       let data;
-        try {
-          data = await loginRes.json();
-        } catch {
-          const text = await loginRes.text();
-          console.error("Raw response:", text);
-          alert("Something went wrong on the server.");
-          return;
-        }
-        const data = await loginRes.json(); // ✅ Parse response first
-    
-        if (data.detail === "2FA code required") {
-            pendingLogin = { email, password }; // store credentials
-            document.getElementById('twofa-modal').style.display = 'flex';
-            return;
-        } else {
-            alert(data.detail || "Login failed.");
-            return;
-        }
+      try {
+        data = await loginRes.json();
+      } catch {
+        const text = await loginRes.text();
+        console.error("Raw response:", text);
+        alert("Something went wrong on the server.");
+        return;
+      }
+
+      if (data.detail === "2FA code required") {
+        pendingLogin = { email, password };
+        document.getElementById('twofa-modal').style.display = 'flex';
+        return;
+      } else {
+        alert(data.detail || "Login failed.");
+        return;
+      }
     }
 
-
-    // If no 2FA required
+    const data = await loginRes.json(); // if successful
     finishLogin(data.access_token);
 
   } catch (err) {
@@ -184,82 +182,55 @@ async function finishLogin(token) {
     window.location.href = "/static/viewprofile/viewprofile.html";
   }
 }
-    document.getElementById('loginForm').addEventListener('submit', async function (e) {
-      e.preventDefault();
-    
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
-    
-      try {
-        const response = await fetch('https://conker-tweaks-production.up.railway.app/auth/login', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'accept': 'application/json'
-          },
-          body: JSON.stringify({ email, password })
-        });
-    
-        if (!response.ok) throw new Error('Login failed');
-    
-        const data = await response.json();
-        localStorage.setItem('access_token', data.access_token);
-        localStorage.setItem('just_logged_in', 'true');
-        window.location.href = '/static/viewprofile/viewprofile.html';
-      } catch (error) {
-        console.error('Login error:', error);
-        const loginError = document.getElementById('login-error');
-        loginError.innerHTML = `<li>Invalid email or password</li>`;
-        loginError.style.display = 'block';
-      }
-    });
-    
-    document.getElementById('registerForm').addEventListener('submit', async function (e) {
-      e.preventDefault();
-    
-      const username = document.getElementById('username').value;
-      const email = document.getElementById('regEmail').value;
-      const password = document.getElementById('regPassword').value;
-      const confirmPassword = document.getElementById('confirmPassword').value;
-      registerError.style.display = 'none';
-    
-      if (password !== confirmPassword) {
-        alert('Passwords do not match.');
-        return;
-      }
-    
-      try {
-        const response = await fetch('https://conker-tweaks-production.up.railway.app/auth/register', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'accept': 'application/json'
-          },
-          body: JSON.stringify({ username, email, password })
-        });
-    
-        if (!response.ok) {
-          const registerError = document.getElementById('register-error');
 
-          if (data.detail && Array.isArray(data.detail)) {
-            registerError.innerHTML = data.detail.map(err => `<li>${err.msg}</li>`).join('');
-          } else if (data.detail) {
-            registerError.innerHTML = `<li>${data.detail}</li>`;
-          } else {
-            registerError.innerHTML = `<li>Registration failed. Please try again.</li>`;
-          }
-          
-          registerError.style.display = 'block';
-        } else {
-          alert('Registration successful! Please login.');
-          window.location.reload();
-        }
-      } catch (error) {
-        console.error('Registration error:', error);
-        alert('Something went wrong. Please try again.');
-      }
+// 🧠 Register form
+document.getElementById('registerForm').addEventListener('submit', async function (e) {
+  e.preventDefault();
+
+  const username = document.getElementById('username').value;
+  const email = document.getElementById('regEmail').value;
+  const password = document.getElementById('regPassword').value;
+  const confirmPassword = document.getElementById('confirmPassword').value;
+  const registerError = document.getElementById('register-error');
+  registerError.style.display = 'none';
+
+  if (password !== confirmPassword) {
+    alert('Passwords do not match.');
+    return;
+  }
+
+  try {
+    const response = await fetch('https://conker-tweaks-production.up.railway.app/auth/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'accept': 'application/json'
+      },
+      body: JSON.stringify({ username, email, password })
     });
-  </script>
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      if (data.detail && Array.isArray(data.detail)) {
+        registerError.innerHTML = data.detail.map(err => `<li>${err.msg}</li>`).join('');
+      } else if (data.detail) {
+        registerError.innerHTML = `<li>${data.detail}</li>`;
+      } else {
+        registerError.innerHTML = `<li>Registration failed. Please try again.</li>`;
+      }
+
+      registerError.style.display = 'block';
+    } else {
+      alert('Registration successful! Please login.');
+      window.location.reload();
+    }
+  } catch (error) {
+    console.error('Registration error:', error);
+    alert('Something went wrong. Please try again.');
+  }
+});
+</script>
 </body>
 </html>
 <!-- Website developed by Your Name - https://github.com/PeterTech-Dev -->
