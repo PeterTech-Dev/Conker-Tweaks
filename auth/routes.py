@@ -100,6 +100,8 @@ def view_profile(current_user: User = Depends(get_current_user)):
         "username": current_user.username,
         "email": current_user.email,
         "created_at": current_user.created_at,
+        "current_package": current_user.current_package,
+        "license_key": current_user.license_key,
     }
 
 @auth_router.post("/profile/update_password")
