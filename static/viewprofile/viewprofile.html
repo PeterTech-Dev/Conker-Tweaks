@@ -141,15 +141,30 @@ Login/Login.html"
     <form id="changePasswordForm">
 			<div class="input-wrapper">
 			  <input type="password" id="oldPassword" placeholder="Old Password" required />
-			  <span class="toggle-password" onclick="togglePassword('oldPassword', this)">👁</span>
+			  <span class="toggle-password" onclick="togglePassword('oldPassword', this)">
+				  <svg class="eye-icon" viewBox="0 0 512.19 512.19" xmlns="http://www.w3.org/2000/svg">
+				    <circle cx="256.095" cy="256.095" r="85.333"/>
+				    <path d="M496.543,201.034C463.455,147.146,388.191,56.735,256.095,56.735S48.735,147.146,15.647,201.034c-20.862,33.743-20.862,76.379,0,110.123c33.088,53.888,108.352,144.299,240.448,144.299s207.36-90.411,240.448-144.299C517.405,277.413,517.405,234.777,496.543,201.034z M256.095,384.095c-70.692,0-128-57.308-128-128s57.308-128,128-128s128,57.308,128,128C384.024,326.758,326.758,384.024,256.095,384.095z"/>
+				  </svg>
+				</span>
 			</div>
 			<div class="input-wrapper">
 			  <input type="password" id="newPassword" placeholder="New Password" required />
-			  <span class="toggle-password" onclick="togglePassword('newPassword', this)">👁</span>
+			  <span class="toggle-password" onclick="togglePassword('oldPassword', this)">
+				  <svg class="eye-icon" viewBox="0 0 512.19 512.19" xmlns="http://www.w3.org/2000/svg">
+				    <circle cx="256.095" cy="256.095" r="85.333"/>
+				    <path d="M496.543,201.034C463.455,147.146,388.191,56.735,256.095,56.735S48.735,147.146,15.647,201.034c-20.862,33.743-20.862,76.379,0,110.123c33.088,53.888,108.352,144.299,240.448,144.299s207.36-90.411,240.448-144.299C517.405,277.413,517.405,234.777,496.543,201.034z M256.095,384.095c-70.692,0-128-57.308-128-128s57.308-128,128-128s128,57.308,128,128C384.024,326.758,326.758,384.024,256.095,384.095z"/>
+				  </svg>
+				</span>
 			</div>
 			<div class="input-wrapper">
 			  <input type="password" id="confirmPassword" placeholder="Confirm Password" required />
-			  <span class="toggle-password" onclick="togglePassword('confirmPassword', this)">👁</span>
+			  <span class="toggle-password" onclick="togglePassword('oldPassword', this)">
+				  <svg class="eye-icon" viewBox="0 0 512.19 512.19" xmlns="http://www.w3.org/2000/svg">
+				    <circle cx="256.095" cy="256.095" r="85.333"/>
+				    <path d="M496.543,201.034C463.455,147.146,388.191,56.735,256.095,56.735S48.735,147.146,15.647,201.034c-20.862,33.743-20.862,76.379,0,110.123c33.088,53.888,108.352,144.299,240.448,144.299s207.36-90.411,240.448-144.299C517.405,277.413,517.405,234.777,496.543,201.034z M256.095,384.095c-70.692,0-128-57.308-128-128s57.308-128,128-128s128,57.308,128,128C384.024,326.758,326.758,384.024,256.095,384.095z"/>
+				  </svg>
+				</span>
 			</div>
       <button type="submit">Update</button>
     </form>
@@ -188,14 +203,27 @@ Support/Support.html"
   </footer>
 
   <script>
-		function togglePassword(id, icon) {
+		function togglePassword(id, iconWrapper) {
 		  const input = document.getElementById(id);
+		  const eye = iconWrapper.querySelector("svg");
+		
+		  const showIcon = `
+		    <svg class="eye-icon" viewBox="0 0 512.19 512.19" xmlns="http://www.w3.org/2000/svg">
+		      <circle cx="256.095" cy="256.095" r="85.333"/>
+		      <path d="M496.543,201.034C463.455,147.146,388.191,56.735,256.095,56.735S48.735,147.146,15.647,201.034c-20.862,33.743-20.862,76.379,0,110.123c33.088,53.888,108.352,144.299,240.448,144.299s207.36-90.411,240.448-144.299C517.405,277.413,517.405,234.777,496.543,201.034z M256.095,384.095c-70.692,0-128-57.308-128-128s57.308-128,128-128s128,57.308,128,128C384.024,326.758,326.758,384.024,256.095,384.095z"/>
+		    </svg>`;
+		
+		  const hideIcon = `
+		    <svg class="eye-icon" viewBox="0 0 512.19 512.19" xmlns="http://www.w3.org/2000/svg">
+		      <path d="M496.543,200.771c-19.259-31.537-43.552-59.707-71.915-83.392l59.733-59.733c8.185-8.475,7.95-21.98-0.525-30.165c-8.267-7.985-21.374-7.985-29.641,0l-64.96,65.045c-40.269-23.918-86.306-36.385-133.141-36.053c-132.075,0-207.339,90.411-240.448,144.299c-20.862,33.743-20.862,76.379,0,110.123c19.259,31.537,43.552,59.707,71.915,83.392l-59.733,59.733c-8.475,8.185-8.71,21.691-0.525,30.165c8.185,8.475,21.691,8.71,30.165,0.525c0.178-0.172,0.353-0.347,0.525-0.525l65.109-65.109c40.219,23.915,86.201,36.402,132.992,36.117c132.075,0,207.339-90.411,240.448-144.299C517.405,277.151,517.405,234.515,496.543,200.771z"/>
+		    </svg>`;
+		
 		  if (input.type === "password") {
 		    input.type = "text";
-		    icon.textContent = "🙈";
+		    iconWrapper.innerHTML = hideIcon;
 		  } else {
 		    input.type = "password";
-		    icon.textContent = "👁";
+		    iconWrapper.innerHTML = showIcon;
 		  }
 		}
     window.addEventListener('DOMContentLoaded', async function () {
