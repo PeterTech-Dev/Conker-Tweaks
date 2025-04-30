@@ -10,6 +10,7 @@ def verify_recaptcha(token: str, secret_key: str, expected_action: str = None, m
 
     r = requests.post(url, data=payload)
     result = r.json()
+    print("🔎 Recaptcha result:", result)
     
     if not result.get("success"):
         raise ValueError("Invalid reCAPTCHA token")
