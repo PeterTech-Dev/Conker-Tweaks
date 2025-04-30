@@ -184,9 +184,18 @@ Support/Support.html"
           }
         });
 
-        if (!response.ok) {
-          throw new Error('Failed to fetch profile');
-        }
+	if (!response.ok) {
+	  const contentType = response.headers.get("content-type");
+	  if (contentType && contentType.includes("application/json")) {
+	    const errorData = await response.json();
+	    console.error('Server error:', errorData);
+	  } else {
+	    const text = await response.text();
+	    console.error('Unexpected response (HTML fallback?):', text);
+	  }
+	  throw new Error('Failed to fetch profile');
+	}
+
 
         const data = await response.json();
         
