@@ -83,9 +83,10 @@ Landing/Landing.html"
     </div>
   </div>
   <script>
-    grecaptcha.ready(function () {
-      grecaptcha.execute('6LchzyQrAAAAAJ-bWdlZpXaI8KVjzQQO73iqkG8-', { action: 'login' })
+    grecaptcha.enterprise.ready(function () {
+      grecaptcha.enterprise.execute('6LchzyQrAAAAAJ-bWdlZpXaI8KVjzQQO73iqkG8-', { action: 'login' })
         .then(function (token) {
+          console.log('Enterprise token:', token);
           fetch('/auth/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
