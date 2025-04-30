@@ -16,7 +16,20 @@ def is_admin(user: User):
     if not user.is_admin:
         raise HTTPException(status_code=403, detail="Admins only")
     return True
+@admin_router.get("/dashboard")
+def admin_dashboard(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    if not current_user.is_admin or not current_user.has_2fa:
+        raise HTTPException(status_code=403, detail="Admins only with 2FA")
 
+    total_users = db.query(User).count()
+    total_products = db.query(Product).count()
+    total_purchases = db.query(Purchase).count()
+
+    return {
+        "users": total_users,
+        "products": total_products,
+        "purchases": total_purchases
+    }   
 # Create a new product
 @admin_router.post("/create-product")
 def create_product(name: str, has_keys: bool, download_link: str, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):

@@ -83,6 +83,97 @@ Landing/Landing.html"
       </div>
     </div>
   </div>
+  <div id="twofa-modal" class="modal-blur" style="display: none;">
+    <div class="modal-content">
+      <button class="close-btn" onclick="document.getElementById('twofa-modal').style.display='none'">&times;</button>
+      <h2>Enter 2FA Code</h2>
+      <input type="text" id="modal-2fa-code" placeholder="6-digit code" required />
+      <button onclick="submit2FACode()">Verify</button>
+    </div>
+  </div>
+
+  <script>
+let pendingLogin = null; // stores login creds if 2FA needed
+
+document.getElementById('loginForm').addEventListener('submit', async function (e) {
+  e.preventDefault();
+
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
+
+  try {
+    const loginRes = await fetch('https://conker-tweaks-production.up.railway.app/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+
+    const data = await loginRes.json();
+
+    if (!loginRes.ok) {
+      if (data.detail === "2FA code required") {
+        pendingLogin = { email, password }; // store credentials
+        document.getElementById('twofa-modal').style.display = 'flex';
+        return;
+      } else {
+        alert(data.detail || "Login failed.");
+        return;
+      }
+    }
+
+    // If no 2FA required
+    finishLogin(data.access_token);
+
+  } catch (err) {
+    alert("Something went wrong during login.");
+    console.error(err);
+  }
+});
+
+async function submit2FACode() {
+  const code = document.getElementById('modal-2fa-code').value;
+
+  if (!pendingLogin) {
+    alert("Something went wrong. Please try logging in again.");
+    return;
+  }
+
+  try {
+    const loginRes = await fetch('https://conker-tweaks-production.up.railway.app/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...pendingLogin, code })
+    });
+
+    const data = await loginRes.json();
+
+    if (!loginRes.ok) {
+      alert(data.detail || "2FA verification failed.");
+      return;
+    }
+
+    finishLogin(data.access_token);
+  } catch (err) {
+    alert("Something went wrong while verifying 2FA.");
+    console.error(err);
+  }
+}
+
+async function finishLogin(token) {
+  localStorage.setItem('access_token', token);
+
+  const profileRes = await fetch('https://conker-tweaks-production.up.railway.app/auth/profile', {
+    headers: { Authorization: "Bearer " + token }
+  });
+
+  const user = await profileRes.json();
+
+  if (user.is_admin && user.has_2fa) {
+    window.location.href = "/static/Admin/Dashboard.html";
+  } else {
+    window.location.href = "/static/viewprofile/viewprofile.html";
+  }
+}
   <script>
     document.getElementById('loginForm').addEventListener('submit', async function (e) {
       e.preventDefault();
@@ -113,7 +204,6 @@ Landing/Landing.html"
         loginError.style.display = 'block';
       }
     });
-    
     
     document.getElementById('registerForm').addEventListener('submit', async function (e) {
       e.preventDefault();

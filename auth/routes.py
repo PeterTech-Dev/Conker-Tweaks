@@ -7,6 +7,10 @@ from passlib.context import CryptContext
 from jose import JWTError, jwt
 from datetime import datetime, timedelta
 from fastapi.security import OAuth2PasswordBearer
+import pyotp
+import qrcode
+from fastapi.responses import StreamingResponse
+import io
 import os
 from dotenv import load_dotenv
 load_dotenv()
@@ -65,7 +69,15 @@ def login_user(user: UserLogin, db: Session = Depends(get_db)):
 
     if not db_user or not verify_password(user.password, db_user.hashed_password):
         raise HTTPException(status_code=401, detail="Invalid email or password")
+    # 🔐 If 2FA is enabled, verify the TOTP code
+    if db_user.has_2fa:
+        if not user.code:
+            raise HTTPException(status_code=401, detail="2FA code required")
 
+        totp = pyotp.TOTP(db_user.twofa_secret)
+
+        if not totp.verify(user.code):
+            raise HTTPException(status_code=403, detail="Invalid 2FA code")
     access_token = create_access_token(data={"sub": db_user.email})
     return {"access_token": access_token, "token_type": "bearer"}
 
@@ -123,3 +135,42 @@ def update_email(new_email: str, db: Session = Depends(get_db), current_user: Us
     current_user.email = new_email
     db.commit()
     return {"message": "Email updated successfully"}
+
+@auth_router.get("/2fa/setup")
+def setup_2fa(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    if current_user.has_2fa:
+        raise HTTPException(status_code=400, detail="2FA already enabled")
+
+    # 1. Generate a secret
+    secret = pyotp.random_base32()
+
+    # 2. Save secret to user
+    current_user.twofa_secret = secret
+    db.commit()
+
+    # 3. Generate provisioning URL
+    totp = pyotp.TOTP(secret)
+    uri = totp.provisioning_uri(name=current_user.email, issuer_name="ConkerTweaks")
+
+    # 4. Generate QR Code
+    img = qrcode.make(uri)
+    buf = io.BytesIO()
+    img.save(buf)
+    buf.seek(0)
+
+    return StreamingResponse(buf, media_type="image/png")
+
+@auth_router.post("/2fa/verify")
+def verify_2fa(code: str, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    if not current_user.twofa_secret:
+        raise HTTPException(status_code=400, detail="2FA not setup")
+
+    totp = pyotp.TOTP(current_user.twofa_secret)
+
+    if not totp.verify(code):
+        raise HTTPException(status_code=403, detail="Invalid 2FA code")
+
+    current_user.has_2fa = True
+    db.commit()
+
+    return {"message": "2FA verified and enabled"}
