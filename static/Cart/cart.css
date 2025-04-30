@@ -1,0 +1,74 @@
+.cart-container {
+  max-width: 800px;
+  margin: auto;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+#cart-items {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.cart-summary {
+  text-align: center;
+}
+
+.coupon-wrapper {
+  display: flex;
+  flex-direction: column; /* make them stack vertically */
+  align-items: flex-end;   /* align both to the right */
+  gap: 10px;               /* space between input and button */
+  margin-bottom: 20px;
+}
+
+.empty-cart-message {
+  align-items: center;
+}
+
+#coupon {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 10px;
+  border: none;
+  border-radius: 2.5px;
+  margin-bottom: 5px;
+  width: 50%;
+}
+
+.checkout-btn {
+  background-color: #00e0ff;
+  color: white;
+  border: none;
+  padding: 15px 25px;
+  border-radius: 10px;
+  font-size: 1rem;
+  margin-bottom: 20px;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.coupon-btn {
+  background-color: #1a1a1a;
+  color: white;
+  border: none;
+  padding: 5px 15px;
+  border-radius: 5px;
+  font-size: 1rem;
+  margin-top: 0;
+  margin-bottom: 20px;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.checkout-btn:hover, .coupon-btn:hover {
+  background-color: #00b8cc;
+}
+

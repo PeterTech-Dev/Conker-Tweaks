@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Conker Tweaks</title>
+  <link rel="stylesheet" href="/static/asset/css/Background.css">
+  <link rel="stylesheet" href="/static/asset/css/Footer.css">
+  <link rel="stylesheet" href="/static/asset/css/Navbar.css">
+  <link rel="stylesheet" href="/static/asset/css/Loader.css">
+  <script src="/static/asset/js/background.js" defer></script>
+  <link rel="stylesheet" href="/static/Login/Login.css"
+>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="loader-wrapper">
+    <svg class="logo-loader" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+      <path d="M11.24,24a2.262,2.262,0,0,1-.948-.212,2.18,2.18,0,0,1-1.2-2.622L10.653,16H6.975A3,3,0,0,1,4.1,12.131l3.024-10A2.983,2.983,0,0,1,10,0h3.693a2.6,2.6,0,0,1,2.433,3.511L14.443,8H17a3,3,0,0,1,2.483,4.684l-6.4,10.3A2.2,2.2,0,0,1,11.24,24Z" fill="#00e0ff"/>
+    </svg>
+  </div>    
+  <div class="stars-container">
+    <div class="star-field">
+      <div class="layer"></div>
+      <div class="layer"></div>
+      <div class="layer"></div>
+      <div class="layer"></div>
+    </div>
+    <div class="glow-circle glow-1"></div>
+    <div class="glow-circle glow-2"></div>
+    <div class="glow-circle glow-3"></div>
+  </div>
+  <div class="login-page">
+    <header class="navbar">
+      <div class="navbar-left">
+        <svg class="logo_image" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="512" height="512"><path d="M11.24,24a2.262,2.262,0,0,1-.948-.212,2.18,2.18,0,0,1-1.2-2.622L10.653,16H6.975A3,3,0,0,1,4.1,12.131l3.024-10A2.983,2.983,0,0,1,10,0h3.693a2.6,2.6,0,0,1,2.433,3.511L14.443,8H17a3,3,0,0,1,2.483,4.684l-6.4,10.3A2.2,2.2,0,0,1,11.24,24Z"/></svg>
+        <div class="logo">Conker Tweaks</div>
+      </div>
+    </header>
+
+    <a href="/static/
+Landing/Landing.html"
+ class="close-btn">&times;</a>
+
+    <div class="login-container">
+      <div id="login-popup" style="display:none;" class="popup">
+        <p>You are logged in!</p>
+      </div>      
+      <div class="login-box">
+        <svg class="logo-login" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path fill="#00e0ff" d="M11.24,24a2.262,2.262,0,0,1-.948-.212,2.18,2.18,0,0,1-1.2-2.622L10.653,16H6.975A3,3,0,0,1,4.1,12.131l3.024-10A2.983,2.983,0,0,1,10,0h3.693a2.6,2.6,0,0,1,2.433,3.511L14.443,8H17a3,3,0,0,1,2.483,4.684l-6.4,10.3A2.2,2.2,0,0,1,11.24,24Z"/>
+        </svg>
+        <h2>Login to Conker Tweaks</h2>
+        <ul id="login-error" class="error-box" style="display: none;"></ul>
+        <form id="loginForm">
+          <input type="email" id="email" placeholder="Email" required />
+          <input type="password" id="password" placeholder="Password" required />
+          <div class="extra-buttons">
+            <a href="/static/#"
+ class="forgot-password">Forgot Password?</a>
+            <a href="/static/#"
+ class="toggle-register" onclick="toggleForms(event)">Register?</a>
+          </div>    
+          <button type="submit">Login</button>
+          <a href="https://discord.com/invite/conkertweaks" class="support-link" target="_blank">Need help? Join our Discord</a>
+        </form>
+      </div>
+      <div class="register-box" id="registerBox">
+        <ul id="register-error" class="error-box" style="display: none;"></ul>
+        <svg class="logo-login" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path fill="#00e0ff" d="M11.24,24a2.262,2.262,0,0,1-.948-.212,2.18,2.18,0,0,1-1.2-2.622L10.653,16H6.975A3,3,0,0,1,4.1,12.131l3.024-10A2.983,2.983,0,0,1,10,0h3.693a2.6,2.6,0,0,1,2.433,3.511L14.443,8H17a3,3,0,0,1,2.483,4.684l-6.4,10.3A2.2,2.2,0,0,1,11.24,24Z"/>
+        </svg>
+        <h2>Create an Account</h2>
+        <form id="registerForm">
+          <input type="text" id="username" placeholder="Username" required />
+          <input type="email" id="regEmail" placeholder="Email" required />
+          <input type="password" id="regPassword" placeholder="Password" required />
+          <input type="password" id="confirmPassword" placeholder="Confirm Password" required />
+          <button type="submit">Register</button>
+          <button class="toggle-login" onclick="toggleForms(event)">Already have an account? Login</button>
+          <a href="https://discord.com/invite/conkertweaks" class="support-link" target="_blank">Need help? Join our Discord</a>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div id="twofa-modal" class="modal-blur" style="display: none;">
+    <div class="modal-content">
+      <button class="close-btn" onclick="document.getElementById('twofa-modal').style.display='none'">&times;</button>
+      <h2>Enter 2FA Code</h2>
+      <input type="text" id="modal-2fa-code" placeholder="6-digit code" required />
+      <button onclick="submit2FACode()">Verify</button>
+    </div>
+  </div>
+
+  <script>
+let pendingLogin = null; // stores login creds if 2FA needed
+
+document.getElementById('loginForm').addEventListener('submit', async function (e) {
+  e.preventDefault();
+
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
+
+  try {
+    const loginRes = await fetch('https://conker-tweaks-production.up.railway.app/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+
+    const data = await loginRes.json();
+
+    if (!loginRes.ok) {
+      if (data.detail === "2FA code required") {
+        pendingLogin = { email, password }; // store credentials
+        document.getElementById('twofa-modal').style.display = 'flex';
+        return;
+      } else {
+        alert(data.detail || "Login failed.");
+        return;
+      }
+    }
+
+    // If no 2FA required
+    finishLogin(data.access_token);
+
+  } catch (err) {
+    alert("Something went wrong during login.");
+    console.error(err);
+  }
+});
+
+async function submit2FACode() {
+  const code = document.getElementById('modal-2fa-code').value;
+
+  if (!pendingLogin) {
+    alert("Something went wrong. Please try logging in again.");
+    return;
+  }
+
+  try {
+    const loginRes = await fetch('https://conker-tweaks-production.up.railway.app/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...pendingLogin, code })
+    });
+
+    const data = await loginRes.json();
+
+    if (!loginRes.ok) {
+      alert(data.detail || "2FA verification failed.");
+      return;
+    }
+
+    finishLogin(data.access_token);
+  } catch (err) {
+    alert("Something went wrong while verifying 2FA.");
+    console.error(err);
+  }
+}
+
+async function finishLogin(token) {
+  localStorage.setItem('access_token', token);
+
+  const profileRes = await fetch('https://conker-tweaks-production.up.railway.app/auth/profile', {
+    headers: { Authorization: "Bearer " + token }
+  });
+
+  const user = await profileRes.json();
+
+  if (user.is_admin && user.has_2fa) {
+    window.location.href = "/static/Admin/Dashboard.html";
+  } else {
+    window.location.href = "/static/viewprofile/viewprofile.html";
+  }
+}
+
+    
+    document.getElementById('registerForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+    
+      const username = document.getElementById('username').value;
+      const email = document.getElementById('regEmail').value;
+      const password = document.getElementById('regPassword').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+      registerError.style.display = 'none';
+    
+      if (password !== confirmPassword) {
+        alert('Passwords do not match.');
+        return;
+      }
+    
+      try {
+        const response = await fetch('https://conker-tweaks-production.up.railway.app/auth/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'accept': 'application/json'
+          },
+          body: JSON.stringify({ username, email, password })
+        });
+    
+        const data = await response.json();
+    
+        if (!response.ok) {
+          const registerError = document.getElementById('register-error');
+
+          if (data.detail && Array.isArray(data.detail)) {
+            registerError.innerHTML = data.detail.map(err => `<li>${err.msg}</li>`).join('');
+          } else if (data.detail) {
+            registerError.innerHTML = `<li>${data.detail}</li>`;
+          } else {
+            registerError.innerHTML = `<li>Registration failed. Please try again.</li>`;
+          }
+          
+          registerError.style.display = 'block';
+        } else {
+          alert('Registration successful! Please login.');
+          window.location.reload();
+        }
+      } catch (error) {
+        console.error('Registration error:', error);
+        alert('Something went wrong. Please try again.');
+      }
+    });
+  </script>
+</body>
+</html>
+<!-- Website developed by Your Name - https://github.com/PeterTech-Dev -->
+

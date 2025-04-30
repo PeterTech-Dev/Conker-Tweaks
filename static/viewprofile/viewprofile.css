@@ -1,0 +1,182 @@
+.page-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+
+.profile-container {
+  max-width: 600px;
+  margin: 50px auto 0 auto; /* 50px from top */
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.profile-card {
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+  border-radius: 15px;
+  padding: 30px;
+  box-shadow: 0 0 20px rgba(0, 224, 255, 0.15);
+  text-align: center;
+}
+
+.profile-card h1 {
+  margin-bottom: 20px;
+  color: #00e0ff;
+}
+
+.profile-info p {
+  margin: 10px 0;
+  font-size: 1.1rem;
+}
+
+.actions {
+  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.btn {
+  background-color: #00e0ff;
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.3s;
+}
+
+.btn:hover {
+  background-color: #00b8cc;
+}
+
+.actions button {
+  background-color: #00b8cc;
+}
+
+.modal-blur {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  backdrop-filter: blur(5px);
+  background: rgba(0, 0, 0, 0.6);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-blur.active {
+  display: flex;
+}
+
+.modal-content {
+  background: black;
+  padding: 30px;
+  border-radius: 12px;
+  max-width: 400px;
+  width: 90%;
+  position: relative;
+  box-shadow: 0 0 20px rgba(0, 224, 255, 0.5);
+  animation: popUp 0.3s ease;
+}
+
+@keyframes popUp {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.modal-content h2 {
+  color: #00e0ff;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.modal-content form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.modal-content input {
+  width: 100%;
+  max-width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  background: #262b3d;
+  border: none;
+  color: white;
+  border-radius: 8px;
+  font-size: 1rem;
+  text-align: center;
+}
+
+.modal-content button[type="submit"] {
+  width: 100%;
+  max-width: 100%;
+  padding: 12px;
+  background: #00e0ff;
+  border: none;
+  color: white;
+  font-weight: bold;
+  border-radius: 8px;
+  margin-top: 10px;
+  cursor: pointer;
+  text-align: center;
+  transition: background 0.3s;
+}
+
+.modal-content button[type="submit"]:hover {
+  background: #00b8cc;
+}
+
+.modal-content .close-btn {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 24px;
+  color: white;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.input-wrapper {
+  width: 100%;
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.input-wrapper input {
+  width: 100%;
+  padding: 12px 12px 12px 12px;
+  margin: 10px 0;
+  background: #262b3d;
+  border: none;
+  color: white;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+.toggle-password {
+  position: absolute;
+  top: 50%;
+  right: 15px;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.toggle-password svg {
+  width: 24px;
+  height: 24px;
+  fill: #00e0ff;
+}
