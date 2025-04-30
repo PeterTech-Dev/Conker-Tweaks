@@ -108,18 +108,19 @@ document.getElementById('loginForm').addEventListener('submit', async function (
       body: JSON.stringify({ email, password })
     });
 
-    const data = await loginRes.json();
-
     if (!loginRes.ok) {
-      if (data.detail === "2FA code required") {
-        pendingLogin = { email, password }; // store credentials
-        document.getElementById('twofa-modal').style.display = 'flex';
-        return;
-      } else {
-        alert(data.detail || "Login failed.");
-        return;
-      }
+        const data = await loginRes.json(); // ✅ Parse response first
+    
+        if (data.detail === "2FA code required") {
+            pendingLogin = { email, password }; // store credentials
+            document.getElementById('twofa-modal').style.display = 'flex';
+            return;
+        } else {
+            alert(data.detail || "Login failed.");
+            return;
+        }
     }
+
 
     // If no 2FA required
     finishLogin(data.access_token);
