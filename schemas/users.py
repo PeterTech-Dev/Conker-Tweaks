@@ -40,3 +40,7 @@ class UserResponse(BaseModel):
     class Config:
         from_attributes = True
 
+class PasswordUpdateRequest(BaseModel):
+    old_password: str
+    new_password: str
+
