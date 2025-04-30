@@ -105,13 +105,18 @@ def view_profile(current_user: User = Depends(get_current_user)):
     }
 
 @auth_router.post("/profile/update_password")
-def update_password(payload: PasswordUpdateRequest, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+def update_password(
+    payload: PasswordUpdateRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
     if not verify_password(payload.old_password, current_user.hashed_password):
         raise HTTPException(status_code=403, detail="Incorrect current password")
 
     current_user.hashed_password = hash_password(payload.new_password)
     db.commit()
     return {"message": "Password updated successfully"}
+
 
 @auth_router.post("/profile/update_email")
 def update_email(new_email: str, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
