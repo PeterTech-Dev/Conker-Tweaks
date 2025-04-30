@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from schemas.users import UserCreate, UserLogin, UserResponse
+from schemas.users import UserCreate, UserLogin, UserResponse, PasswordUpdateRequest
 from models.users import User
 from database import get_db
 from passlib.context import CryptContext
