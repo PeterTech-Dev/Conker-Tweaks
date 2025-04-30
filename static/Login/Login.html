@@ -60,8 +60,7 @@ Landing/Landing.html"
  class="forgot-password">Forgot Password?</a>
             <a href="/static/#"
  class="toggle-register" onclick="toggleForms(event)">Register?</a>
-          </div>
-          <div class="g-recaptcha" data-sitekey="6LchzyQrAAAAAJ-bWdlZpXaI8KVjzQQO73iqkG8-"></div>        
+          </div>    
           <button type="submit">Login</button>
           <a href="https://discord.com/invite/conkertweaks" class="support-link" target="_blank">Need help? Join our Discord</a>
         </form>
@@ -76,7 +75,6 @@ Landing/Landing.html"
           <input type="email" id="regEmail" placeholder="Email" required />
           <input type="password" id="regPassword" placeholder="Password" required />
           <input type="password" id="confirmPassword" placeholder="Confirm Password" required />
-          <div class="g-recaptcha" data-sitekey="6LchzyQrAAAAAJ-bWdlZpXaI8KVjzQQO73iqkG8-"></div> 
           <button type="submit">Register</button>
           <button class="toggle-login" onclick="toggleForms(event)">Already have an account? Login</button>
           <a href="https://discord.com/invite/conkertweaks" class="support-link" target="_blank">Need help? Join our Discord</a>
@@ -101,51 +99,41 @@ Landing/Landing.html"
     });
 
     document.getElementById('loginForm').addEventListener('submit', async function (e) {
-      e.preventDefault();
+  e.preventDefault();
 
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
-      const token = grecaptcha.getResponse();
-      if (!token) {
-        alert('Please complete the reCAPTCHA');
-        return;
-      }
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
 
+  grecaptcha.enterprise.ready(async () => {
+    const token = await grecaptcha.enterprise.execute('6LchzyQrAAAAAJ-bWdlZpXaI8KVjzQQO73iqkG8-', { action: 'login' });
 
-      try {
-        const response = await fetch('http://127.0.0.1:8000/auth/login', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'accept': 'application/json'
-          },
-          body: JSON.stringify({
-            email: email,
-            password: password,
-            recaptcha_token: token
-          })
-        });
+    try {
+      const response = await fetch('http://127.0.0.1:8000/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'accept': 'application/json'
+        },
+        body: JSON.stringify({
+          email,
+          password,
+          recaptcha_token: token
+        })
+      });
 
-        if (!response.ok) {
-          throw new Error('Login failed');
-        }
+      if (!response.ok) throw new Error('Login failed');
 
-        const data = await response.json();
+      const data = await response.json();
+      localStorage.setItem('access_token', data.access_token);
+      localStorage.setItem('just_logged_in', 'true');
+      window.location.href = 'static/viewprofile/viewprofile.html';
+    } catch (error) {
+      console.error('Login error:', error);
+      alert('Login failed. Please try again.');
+    }
+  });
+});
 
-        // Save the token locally
-        localStorage.setItem('access_token', data.access_token);
-
-        // Set the "just_logged_in" flag
-        localStorage.setItem('just_logged_in', 'true');
-
-        // Redirect to view profile
-        window.location.href = '/ViewProfile/ViewProfile.html'; 
-
-      } catch (error) {
-        console.error('Login error:', error);
-        alert('Login failed, please check your email and password.');
-      }
-    });
 
 
     document.getElementById('registerForm').addEventListener('submit', async function (e) {
