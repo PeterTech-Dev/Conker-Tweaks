@@ -31,10 +31,10 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 @app.get("/{full_path:path}", response_class=HTMLResponse)
 async def serve_html(full_path: str):
     file_path = f"static/{full_path}"
-    if os.path.exists(file_path) and file_path.endswith(".html"):
+    if full_path.endswith(".html") and os.path.exists(file_path):
         return FileResponse(file_path)
-    else:
-        return FileResponse("static/Landing/Landing.html")
+    return FileResponse("static/Landing/Landing.html") if full_path == "" else HTMLResponse("<h1>404 Not Found</h1>", status_code=404)
+
 
 origins = [
     "http://localhost",
