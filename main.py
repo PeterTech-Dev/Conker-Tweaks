@@ -17,6 +17,15 @@ import os
 
 app = FastAPI()
 
+print("🔨 Checking database tables...")
+Base.metadata.create_all(bind=engine)
+
+app.include_router(auth_router, prefix="/auth", tags=["Auth"])
+app.include_router(products_router, prefix="/products", tags=["Products"])
+app.include_router(admin_router, prefix="/admin", tags=["Admin"])
+app.include_router(order_router)
+app.include_router(webhook_router, prefix="/webhooks")
+
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 @app.get("/{full_path:path}", response_class=HTMLResponse)
@@ -26,15 +35,6 @@ async def serve_html(full_path: str):
         return FileResponse(file_path)
     else:
         return FileResponse("static/Landing/Landing.html")
-
-print("🔨 Checking database tables...")
-Base.metadata.create_all(bind=engine)
-
-app.include_router(auth_router, prefix="/auth", tags=["Auth"])
-app.include_router(products_router, prefix="/products", tags=["Products"])
-app.include_router(admin_router, prefix="/admin", tags=["Admin"])
-app.include_router(order_router)
-app.include_router(webhook_router, prefix="/webhooks")
 
 origins = [
     "http://localhost",
