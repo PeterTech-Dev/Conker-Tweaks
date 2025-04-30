@@ -1,0 +1,226 @@
+    .hamburger {
+        display: none;
+        flex-direction: column;
+        justify-content: space-between;
+        width: 30px;
+        height: 22px;
+        cursor: pointer;
+        z-index: 1000;
+    }
+
+    .hamburger span {
+        background: #00e0ff;
+        height: 3px;
+        width: 100%;
+        border-radius: 2px;
+        transition: all 0.3s ease;
+    }
+
+  .navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 25px 50px;
+    font-family: 'Outfit', sans-serif;
+  }
+  
+  .navbar-left .logo {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: white;
+  }
+  .navbar-left {
+    display: flex;
+    align-items: center;
+    pointer-events: none;
+  }
+  
+  .logo_image {
+    width: 18px;
+    height: 18px;
+    margin-right: 10px;
+    fill: white;
+    background-color: #00e0ff;
+    border-radius: 10px;
+    padding: 15px 15px;
+    box-shadow: 0 0 15px #00e0ff;
+  }
+  
+  .mobile-nav {
+    display: none;
+  }
+  
+  
+  .navbar-center {
+    display: flex;
+    gap: 25px;
+  }
+  
+  .navbar-center a {
+    position: relative;
+    text-decoration: none;
+    color: #ccc;
+    font-weight: 500;
+    transition: color 0.3s;
+  }
+
+  .navbar-center a::after {
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 2px;
+    left: 0;
+    bottom: -5px;
+    background-color: #00e0ff;
+    transition: width 0.3s ease;
+  }
+  
+  .navbar-center a:hover {
+    color: #00e0ff;
+  }
+  
+  .navbar-center a:hover::after {
+    width: 100%;
+  }
+  
+  .navbar-center a.active {
+    color: #00e0ff;
+  }
+  
+  .navbar-center a.active::after {
+    width: 100%;
+  }
+  
+  .navbar-right {
+    display: flex;
+    gap: 15px;
+  }
+
+  .navbar-right a {
+    text-decoration: none;
+  }  
+
+  .icon-cart {
+    width: 18px;
+    height: 18px;
+    margin-right: 10px;
+    fill: white;
+  }
+
+  .icon-img {
+    width: 18px;
+    height: 18px;
+    margin-right: 10px;
+    fill: white;
+  }  
+  
+  .login {
+    display: flex;
+    background-color: #1a1a1a;
+    color: #fff;
+    padding: 15px 25px;
+    border: none;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    align-items: center;
+    border: 1px solid #2E2D35;
+  }
+  
+  .purchase {
+    display: flex;
+    background: #00e0ff;
+    color: #fff;
+    padding: 15px 25px;
+    border: none;
+    border-radius: 10px;
+    font-weight: bold;
+    box-shadow: 0 0 15px #00e0ff;
+    cursor: pointer;
+    align-items: center;
+  }
+  
+  .login:hover {
+    background-color: #2e2d35;
+    color: #00e0ff;
+    border-color: #00e0ff;
+    transition: all 0.3s ease;
+  }
+  
+  .purchase:hover {
+    background: #00b8cc;
+    box-shadow: 0 0 20px #00e0ff;
+    transition: all 0.3s ease;
+  }
+
+  .login:hover .icon-img {
+    fill: #00e0ff;
+    transform: translateX(2px);
+    transition: transform 0.3s ease;
+  }
+
+  @media (max-width: 768px) {
+    .navbar > .navbar-center,
+    .navbar > .navbar-right {
+      display: none !important;
+    }
+    
+    .mobile-nav {
+      display: none;
+      flex-direction: column;
+      width: calc(100% - 60px);
+      background-color: #1a1a1a;
+      border-radius: 12px;
+      padding: 15px;
+      margin-top: 10px;
+      margin-left: auto;
+      margin-right: 3.5%;
+      gap: 0;
+      overflow: hidden;
+      box-shadow: 0 0 15px rgba(0, 224, 255, 0.3);
+      z-index: 999;
+      position: absolute;
+      top: 70px;
+      right: 0;
+    }
+    
+    .navbar.open .mobile-nav {
+      display: flex;
+    }
+    
+    .navbar-center a,
+    .navbar-right button {
+      width: 100%;
+      text-align: left;
+      padding: 15px;
+      background: transparent;
+      color: white;
+      border: none;
+      border-radius: 0;
+      font-size: 1rem;
+      box-shadow: none;
+      margin: 5px;
+    }
+    
+    .navbar-center a:first-child,
+    .navbar-right button:first-child {
+      border-top: none;
+    }
+    
+    .navbar-center a:hover,
+    .navbar-right button:hover {
+      background-color: #2e2d35;
+      box-shadow: none;
+    }    
+  
+    .hamburger {
+      display: flex;
+      position: absolute;
+      top: 40px;
+      right: 30px;
+    }
+  
+    .hamburger span:nth-child(1) { top: 0; position: absolute; }
+    .hamburger span:nth-child(2) { top: 9px; position: absolute; }
+    .hamburger span:nth-child(3) { top: 18px; position: absolute; }
+}

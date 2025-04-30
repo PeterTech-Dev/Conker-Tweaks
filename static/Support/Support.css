@@ -1,0 +1,44 @@
+  .support-section {
+    text-align: center;
+    padding: 100px 20px;
+    color: #fff;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+  
+  .support-section h1 {
+    font-size: 3rem;
+    color: #00e0ff;
+    margin-bottom: 20px;
+  }
+  
+  .support-section p {
+    font-size: 1.2rem;
+    color: #ccc;
+    margin-bottom: 40px;
+  }
+  
+  .support-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background-color: #5865F2;
+    color: #fff;
+    padding: 15px 30px;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 1rem;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 0 20px rgba(88, 101, 242, 0.3);
+  }
+  
+  .support-btn:hover {
+    background-color: #4752c4;
+  }
+  
+  .discord-icon {
+    width: 20px;
+    height: 20px;
+    fill: white;
+  }

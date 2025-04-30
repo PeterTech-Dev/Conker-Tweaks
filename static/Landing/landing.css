@@ -1,0 +1,338 @@
+  .hero {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 60px 80px;
+    position: relative;
+  }
+  
+  .hero-text {
+    max-width: 600px;
+  }
+  
+  .hero-text .badge {
+    background: rgba(0, 255, 255, 0.1);
+    padding: 10px 30px;
+    border-radius: 50px;
+    font-size: 1.0rem;
+    color: #00e0ff;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #00e0ff;
+    text-transform: uppercase;
+    font-weight: bold; 
+  }
+  
+  .badge_image {
+    width: 18px;
+    height: 18px;
+    fill: #00e0ff;
+    display: block;
+  }
+  
+  
+  .hero-text h1 {
+    font-size: 3.8rem;
+    color: #00e0ff;
+    margin: 0;
+  }
+  
+  .hero-text p {
+    font-size: 1.3rem;
+    margin: 20px 0 30px;
+    line-height: 1.6;
+    color: #fff;
+  }
+  
+  .cta button {
+    padding: 18px 28px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    margin-right: 15px;
+    cursor: pointer;
+    font-size: 1rem;
+  }
+  
+  .get-started {
+    display: inline-flex;
+    align-items: center;
+    background: #00e0ff;
+    color: white;
+    box-shadow: 0 0 15px #00e0ff;
+    gap: 10px;
+  }
+  
+  .rocket {
+    width: 18px;
+    height: 18px;
+    fill: white;
+    display: block;
+  }
+
+  .get-started:hover {
+    background: #00b8cc;
+    box-shadow: 0 0 25px #00e0ff;
+    transition: all 0.3s ease;
+  }
+  
+  .get-started:hover .rocket {
+    fill: #fff;
+    transform: translateX(3px) translateY(-3px);
+    transition: transform 0.3s ease;
+  }
+  
+
+  .view-pricing {
+    display: inline-flex;
+    align-items: center;
+    background: #1a1a1a;
+    color: #fff;
+    gap: 10px;
+  }
+
+  .chart {
+    width: 18px;
+    height: 18px;
+    fill: #00e0ff;
+    display: block;
+  }
+
+  .view-pricing:hover {
+    background: #2e2d35;
+    color: #00e0ff;
+    transition: all 0.3s ease;
+  }
+  
+  .view-pricing:hover .chart {
+    fill: #00e0ff;
+    transform: scale(1.1);
+    transition: transform 0.3s ease, fill 0.3s ease;
+  }  
+  
+  @media (max-width: 768px) {
+    /* General Layout Block Styles */
+    body {
+      margin: 0;
+      padding: 0 20px;
+      overflow-x: hidden;
+    }
+  
+    .hero {
+      flex-direction: column;
+      padding: 40px 20px;
+      text-align: center;
+    }
+  
+    .hero-text h1 {
+      font-size: 2.2rem;
+    }
+  
+    .hero-text p {
+      font-size: 1.1rem;
+    }
+  
+    .cta button {
+      width: 100%;
+      margin-bottom: 10px;
+      justify-content: center;
+    }
+  
+    .glow-circle {
+      width: 400px;
+      height: 400px;
+      filter: blur(15px);
+    }
+  }
+
+  .phone-dashboard {
+    background: #1c1f2a;
+    border-radius: 25px;
+    padding: 30px;
+    width: 300px;
+    box-shadow: 0 0 30px rgba(0, 255, 255, 0.2);
+    text-align: center;
+  }
+  
+  .phone-wrapper {
+    position: relative;
+    width: 300px; /* same as .hero_phone */
+    height: 630px; /* same as .hero_phone */
+  }
+  
+  .hero_phone {
+    z-index: 0;
+    width: 100%;
+    height: 100%;
+    background: #252237;
+    border: 12px solid #1A1728;
+    border-radius: 36px;
+    position: relative;
+    box-shadow: 0 0 50px -10px #00e0ff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    overflow: hidden;
+  }
+  
+  .notch {
+    position: absolute;
+    top: 0;
+    left: 55%;
+    transform: translateX(-50%);
+    width: 175px;
+    height: 35px;
+    background: #090810;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+    z-index: 1;
+  }
+  
+
+  .hero_phone > * {
+    margin: 30px 10px;
+  }
+
+  .hero_phone-inner {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    box-sizing: border-box;
+    pointer-events: none;
+  }
+
+  .phone-top {
+    display: inline-flex;
+    align-items: center;
+    gap: 20px;
+    padding: 17px 30px;
+    background-color: #282538;
+    border-radius: 15px;
+    border: 1px solid #322F42;
+    box-shadow: 0 0 15px -5px black;
+  }
+
+  .lock {
+    width: 25px;
+    height: 25px;
+    fill: #00e0ff;
+    display: block;
+  }
+
+  .icon-key-wrapper {
+    background-color: #00e0ff;
+    padding: 30px;
+    border-radius: 50%;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 0 15px -5px #00e0ff;
+  }
+  
+  .icon-key {
+    width: 45px;
+    height: 45px;
+    fill: white;
+    transform: scaleX(-1) rotate(90deg);
+    display: block;
+  }
+  
+  .license-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    margin-top: 10px;
+  }
+  
+  .license-header h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: white;
+    margin: 0;
+  }
+  
+  .license-header p {
+    font-size: 0.9rem;
+    color: #bbb;
+    line-height: 1.4;
+    margin: 0;
+    max-width: 220px;
+  }
+  
+  .license-box {
+    margin-top: 60px;
+    padding: 20px;
+    width: 200px;
+    height: 250px;
+    font-size: 0.95rem;
+    background-color: #282538;
+    border: 1px solid #322F42;
+    border-top-right-radius: 20px;
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    box-shadow: 0 0 15px -5px black;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .license-box h4 {
+    color: #00e0ff;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+    font-size: 1rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    border-bottom: 1px solid #322F42;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .license-row {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #322F42;
+    padding: 8px 0;
+    font-size: 0.9rem;
+  }
+  
+  .license-row:last-child {
+    border-bottom: none;
+  }
+  
+  .id-badge {
+    width: 18px;
+    height: 18px;
+    fill: #00e0ff;
+    display: block;
+  }
+  
+  .green {
+    color: #00ff95;
+    text-shadow: 0 0 4px rgba(0, 255, 149, 0.4);
+  }
+  
+  .blue {
+    color: #00e0ff;
+    text-shadow: 0 0 4px rgba(0, 224, 255, 0.4);
+  }
+  
+  @media (max-width: 768px) {
+    .phone-wrapper {
+      display: none !important;
+    }
+  }
+
+  
+  
+  
+  

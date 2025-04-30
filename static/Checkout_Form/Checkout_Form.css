@@ -1,0 +1,40 @@
+
+.address-container {
+  max-width: 600px;
+  margin: auto;
+}
+
+
+h1 {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+input {
+  background: #262b3d;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 14px;
+  margin: 10px 0;
+  font-size: 1rem;
+}
+
+.submit-button {
+  background-color: #00e0ff;
+  color: white;
+  border: none;
+  padding: 15px;
+  border-radius: 10px;
+  margin-top: 20px;
+  cursor: pointer;
+}
+
+.submit-button:hover {
+  background-color: #00b8cc;
+}

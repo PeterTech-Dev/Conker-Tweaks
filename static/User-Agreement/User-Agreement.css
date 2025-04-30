@@ -1,0 +1,30 @@
+  .Privacy-Policy {
+    font-family: 'Outfit', sans-serif;
+    color: white;
+    line-height: 1.6;
+    padding: 40px;
+    max-width: 900px;
+    margin: auto;
+  }
+  h1, h2, h3 {
+    color: #00e0ff;
+  }
+  p {
+    margin-bottom: 15px;
+  }
+
+  .Privacy-Policy a {
+    color: #00e0ff;
+    text-decoration: none;
+  }
+  .Privacy-Policy a:hover {
+    text-decoration: underline;
+  }
+  .section {
+    margin-bottom: 40px;
+  }
+
+  .contact {
+    color: #00e0ff;
+    text-decoration: none;
+  }

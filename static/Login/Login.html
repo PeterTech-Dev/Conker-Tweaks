@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Conker Tweaks</title>
+  <link rel="stylesheet" href="/static/asset/css/Background.css">
+  <link rel="stylesheet" href="/static/asset/css/Footer.css">
+  <link rel="stylesheet" href="/static/asset/css/Navbar.css">
+  <link rel="stylesheet" href="/static/asset/css/Loader.css">
+  <script src="/static/asset/js/background.js" defer></script>
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+  <link rel="stylesheet" href="/static/Login/Login.css"
+>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="loader-wrapper">
+    <svg class="logo-loader" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+      <path d="M11.24,24a2.262,2.262,0,0,1-.948-.212,2.18,2.18,0,0,1-1.2-2.622L10.653,16H6.975A3,3,0,0,1,4.1,12.131l3.024-10A2.983,2.983,0,0,1,10,0h3.693a2.6,2.6,0,0,1,2.433,3.511L14.443,8H17a3,3,0,0,1,2.483,4.684l-6.4,10.3A2.2,2.2,0,0,1,11.24,24Z" fill="#00e0ff"/>
+    </svg>
+  </div>    
+  <div class="stars-container">
+    <div class="star-field">
+      <div class="layer"></div>
+      <div class="layer"></div>
+      <div class="layer"></div>
+      <div class="layer"></div>
+    </div>
+    <div class="glow-circle glow-1"></div>
+    <div class="glow-circle glow-2"></div>
+    <div class="glow-circle glow-3"></div>
+  </div>
+  <div class="login-page">
+    <header class="navbar">
+      <div class="navbar-left">
+        <svg class="logo_image" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="512" height="512"><path d="M11.24,24a2.262,2.262,0,0,1-.948-.212,2.18,2.18,0,0,1-1.2-2.622L10.653,16H6.975A3,3,0,0,1,4.1,12.131l3.024-10A2.983,2.983,0,0,1,10,0h3.693a2.6,2.6,0,0,1,2.433,3.511L14.443,8H17a3,3,0,0,1,2.483,4.684l-6.4,10.3A2.2,2.2,0,0,1,11.24,24Z"/></svg>
+        <div class="logo">Conker Tweaks</div>
+      </div>
+    </header>
+
+    <a href="/static/
+Landing/Landing.html"
+ class="close-btn">&times;</a>
+
+    <div class="login-container">
+      <div id="login-popup" style="display:none;" class="popup">
+        <p>You are logged in!</p>
+      </div>      
+      <div class="login-box">
+        <svg class="logo-login" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path fill="#00e0ff" d="M11.24,24a2.262,2.262,0,0,1-.948-.212,2.18,2.18,0,0,1-1.2-2.622L10.653,16H6.975A3,3,0,0,1,4.1,12.131l3.024-10A2.983,2.983,0,0,1,10,0h3.693a2.6,2.6,0,0,1,2.433,3.511L14.443,8H17a3,3,0,0,1,2.483,4.684l-6.4,10.3A2.2,2.2,0,0,1,11.24,24Z"/>
+        </svg>
+        <h2>Login to Conker Tweaks</h2>
+        <form id="loginForm">
+          <input type="email" id="email" placeholder="Email" required />
+          <input type="password" id="password" placeholder="Password" required />
+          <div class="extra-buttons">
+            <a href="/static/#"
+ class="forgot-password">Forgot Password?</a>
+            <a href="/static/#"
+ class="toggle-register" onclick="toggleForms(event)">Register?</a>
+          </div>
+          <div class="g-recaptcha" data-sitekey="6LchzyQrAAAAAJ-bWdlZpXaI8KVjzQQO73iqkG8-"></div>        
+          <button type="submit">Login</button>
+          <a href="https://discord.com/invite/conkertweaks" class="support-link" target="_blank">Need help? Join our Discord</a>
+        </form>
+      </div>
+      <div class="register-box" id="registerBox">
+        <svg class="logo-login" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path fill="#00e0ff" d="M11.24,24a2.262,2.262,0,0,1-.948-.212,2.18,2.18,0,0,1-1.2-2.622L10.653,16H6.975A3,3,0,0,1,4.1,12.131l3.024-10A2.983,2.983,0,0,1,10,0h3.693a2.6,2.6,0,0,1,2.433,3.511L14.443,8H17a3,3,0,0,1,2.483,4.684l-6.4,10.3A2.2,2.2,0,0,1,11.24,24Z"/>
+        </svg>
+        <h2>Create an Account</h2>
+        <form id="registerForm">
+          <input type="text" id="username" placeholder="Username" required />
+          <input type="email" id="regEmail" placeholder="Email" required />
+          <input type="password" id="regPassword" placeholder="Password" required />
+          <input type="password" id="confirmPassword" placeholder="Confirm Password" required />
+          <div class="g-recaptcha" data-sitekey="6LchzyQrAAAAAJ-bWdlZpXaI8KVjzQQO73iqkG8-"></div> 
+          <button type="submit">Register</button>
+          <button class="toggle-login" onclick="toggleForms(event)">Already have an account? Login</button>
+          <a href="https://discord.com/invite/conkertweaks" class="support-link" target="_blank">Need help? Join our Discord</a>
+        </form>
+      </div>
+    </div>
+  </div>
+  <script>
+    grecaptcha.ready(function () {
+      grecaptcha.execute('YOUR_RECAPTCHA_SITE_KEY', { action: 'login' })
+        .then(function (token) {
+          fetch('/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              email: email,
+              password: password,
+              recaptcha_token: token
+            })
+          })
+        });
+    });
+
+    document.getElementById('loginForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const token = grecaptcha.getResponse();
+      if (!token) {
+        alert('Please complete the reCAPTCHA');
+        return;
+      }
+
+
+      try {
+        const response = await fetch('http://127.0.0.1:8000/auth/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'accept': 'application/json'
+          },
+          body: JSON.stringify({
+            email: email,
+            password: password,
+            recaptcha_token: token
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error('Login failed');
+        }
+
+        const data = await response.json();
+
+        // Save the token locally
+        localStorage.setItem('access_token', data.access_token);
+
+        // Set the "just_logged_in" flag
+        localStorage.setItem('just_logged_in', 'true');
+
+        // Redirect to view profile
+        window.location.href = '/ViewProfile/ViewProfile.html'; 
+
+      } catch (error) {
+        console.error('Login error:', error);
+        alert('Login failed, please check your email and password.');
+      }
+    });
+
+
+    document.getElementById('registerForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    const username = document.getElementById('username').value;
+    const email    = document.getElementById('regEmail').value;
+    const password = document.getElementById('regPassword').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    const token = grecaptcha.getResponse();
+    if (!token) {
+      alert('Please complete the reCAPTCHA');
+      return;
+    }
+
+
+    if (password !== confirmPassword) {
+      alert('Passwords do not match.');
+      return;
+    }
+
+    try {
+      const response = await fetch('http://127.0.0.1:8000/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'accept': 'application/json'
+        },
+        body: JSON.stringify({
+          username: username,
+          email: email,
+          password: password,
+          recaptcha_token: token
+        })
+      });
+
+      const data = await response.json();
+      console.log(data);
+
+      if (response.ok) {
+        alert('Registered successfully! Please login.');
+        toggleForms(); // Automatically switch to login form after registering
+      } else {
+        alert('Registration failed: ' + (data.detail?.[0]?.msg || 'Unknown error'));
+      }
+    } catch (error) {
+      console.error('Registration error:', error);
+      alert('Something went wrong. Please try again.');
+    }
+  });
+
+  function toggleForms(event) {
+  if (event) event.preventDefault();
+  
+  const loginBox = document.querySelector('.login-box');
+  const registerBox = document.getElementById('registerBox');
+
+  if (loginBox.classList.contains('hidden')) {
+    // show login, hide register
+    loginBox.classList.remove('hidden');
+    registerBox.classList.remove('active');
+  } else {
+    // show register, hide login
+    loginBox.classList.add('hidden');
+    registerBox.classList.add('active');
+  }
+}
+
+
+  </script>
+</body>
+</html>
+<!-- Website developed by Your Name - https://github.com/PeterTech-Dev -->
+

@@ -1,0 +1,12 @@
+h1 {
+  color: #00e0ff;
+}
+p {
+  margin-top: 10px;
+}
+.transaction-id {
+  margin-top: 20px;
+  background: #282c3e;
+  padding: 10px 20px;
+  border-radius: 10px;
+}
