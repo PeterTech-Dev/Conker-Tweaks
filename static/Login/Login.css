@@ -260,4 +260,29 @@
   100% { opacity: 0; transform: translateY(-20px); }
 }
 
+.error-box {
+  background: rgba(255, 0, 77, 0.15);
+  border-left: 4px solid #ff0033;
+  color: #ffb3b3;
+  list-style: none;
+  padding: 15px;
+  margin-bottom: 20px;
+  font-size: 0.95rem;
+  border-radius: 10px;
+  text-align: left;
+  animation: fadeError 0.3s ease-in-out;
+  max-width: 100%;
+  box-shadow: 0 0 10px rgba(255, 0, 77, 0.2);
+}
+
+@keyframes fadeError {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.error-box li::before {
+  content: "✖ ";
+  color: #ff0033;
+}
+
 
