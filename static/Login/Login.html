@@ -111,7 +111,7 @@ document.getElementById('loginForm').addEventListener('submit', async function (
       const data = await response.json();
       localStorage.setItem('access_token', data.access_token);
       localStorage.setItem('just_logged_in', 'true');
-      window.location.href = '/static/ViewProfile/ViewProfile.html';
+      window.location.href = '/static/viewprofile/viewprofile.html';
     } catch (error) {
       console.error('Login error:', error);
       alert('Login failed. Please try again.');
