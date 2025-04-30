@@ -246,9 +246,23 @@ function closeChangePassword() {
 	  const oldPassword = document.getElementById('oldPassword').value;
 	  const newPassword = document.getElementById('newPassword').value;
 	  const confirmPassword = document.getElementById('confirmPassword').value;
+		
+		if (!newPassword || !confirmPassword) {
+	    alert("All fields are required.");
+	    return;
+	  }
 	
 	  if (newPassword !== confirmPassword) {
-	    alert("Passwords don't match.");
+	    alert("New passwords do not match.");
+	    return;
+	  }
+	
+	  if (newPassword.length < 8 ||
+	      !/[A-Z]/.test(newPassword) ||
+	      !/[a-z]/.test(newPassword) ||
+	      !/[0-9]/.test(newPassword) ||
+	      !/[!@#$%^&*]/.test(newPassword)) {
+	    alert("New password must be at least 8 characters and include uppercase, lowercase, number, and special character.");
 	    return;
 	  }
 	
