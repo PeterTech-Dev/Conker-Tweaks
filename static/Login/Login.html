@@ -9,7 +9,6 @@
   <link rel="stylesheet" href="/static/asset/css/Navbar.css">
   <link rel="stylesheet" href="/static/asset/css/Loader.css">
   <script src="/static/asset/js/background.js" defer></script>
-  <script src="https://www.google.com/recaptcha/api.js?render=6LchzyQrAAAAAJ-bWdlZpXaI8KVjzQQO73iqkG8-"></script>
   <link rel="stylesheet" href="/static/Login/Login.css"
 >
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
@@ -83,88 +82,71 @@ Landing/Landing.html"
     </div>
   </div>
   <script>
-document.getElementById('loginForm').addEventListener('submit', async function (e) {
-  e.preventDefault();
-
-  const email = document.getElementById('email').value;
-  const password = document.getElementById('password').value;
-
-  grecaptcha.ready(async () => {
-    const token = await grecaptcha.execute('6LchzyQrAAAAAJ-bWdlZpXaI8KVjzQQO73iqkG8-', { action: 'login' });
-    console.log('Sending reCAPTCHA token:', token);
-    try {
-      const response = await fetch('https://conker-tweaks-production.up.railway.app/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'accept': 'application/json'
-        },
-        body: JSON.stringify({
-          email,
-          password,
-          recaptcha_token: token
-        })
-      });
-
-      if (!response.ok) throw new Error('Login failed');
-
-      const data = await response.json();
-      localStorage.setItem('access_token', data.access_token);
-      localStorage.setItem('just_logged_in', 'true');
-      window.location.href = '/static/viewprofile/viewprofile.html';
-    } catch (error) {
-      console.error('Login error:', error);
-      alert('Login failed. Please try again.');
-    }
-  });
-});
-
-document.getElementById('registerForm').addEventListener('submit', async function (e) {
-  e.preventDefault();
-
-  const username = document.getElementById('username').value;
-  const email    = document.getElementById('regEmail').value;
-  const password = document.getElementById('regPassword').value;
-  const confirmPassword = document.getElementById('confirmPassword').value;
-
-  if (password !== confirmPassword) {
-    alert('Passwords do not match.');
-    return;
-  }
-
-  grecaptcha.ready(async () => {
-    const token = await grecaptcha.execute('6LchzyQrAAAAAJ-bWdlZpXaI8KVjzQQO73iqkG8-', { action: 'register' });
-    console.log('Sending reCAPTCHA token:', token);
-    try {
-      const response = await fetch('https://conker-tweaks-production.up.railway.app/auth/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'accept': 'application/json'
-        },
-        body: JSON.stringify({
-          username,
-          email,
-          password,
-          recaptcha_token: token
-        })
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Response text:', errorText);
-        throw new Error('Login failed');
-      } else {
-        alert('Registration failed: ' + (data.detail?.[0]?.msg || 'Unknown error'));
+    document.getElementById('loginForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+    
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+    
+      try {
+        const response = await fetch('https://conker-tweaks-production.up.railway.app/auth/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'accept': 'application/json'
+          },
+          body: JSON.stringify({ email, password })
+        });
+    
+        if (!response.ok) throw new Error('Login failed');
+    
+        const data = await response.json();
+        localStorage.setItem('access_token', data.access_token);
+        localStorage.setItem('just_logged_in', 'true');
+        window.location.href = '/static/viewprofile/viewprofile.html';
+      } catch (error) {
+        console.error('Login error:', error);
+        alert('Login failed. Please try again.');
       }
-    } catch (error) {
-      console.error('Registration error:', error);
-      alert('Something went wrong. Please try again.');
-    }
-  });
-});
+    });
+    
+    
+    document.getElementById('registerForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+    
+      const username = document.getElementById('username').value;
+      const email = document.getElementById('regEmail').value;
+      const password = document.getElementById('regPassword').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+    
+      if (password !== confirmPassword) {
+        alert('Passwords do not match.');
+        return;
+      }
+    
+      try {
+        const response = await fetch('https://conker-tweaks-production.up.railway.app/auth/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'accept': 'application/json'
+          },
+          body: JSON.stringify({ username, email, password })
+        });
+    
+        const data = await response.json();
+    
+        if (!response.ok) {
+          alert('Registration failed: ' + (data.detail?.[0]?.msg || 'Unknown error'));
+        } else {
+          alert('Registration successful! Please login.');
+          window.location.reload();
+        }
+      } catch (error) {
+        console.error('Registration error:', error);
+        alert('Something went wrong. Please try again.');
+      }
+    });
   </script>
 </body>
 </html>
