@@ -6,7 +6,6 @@ class UserCreate(BaseModel):
     username: str = Field(min_length=3, max_length=20)
     email: EmailStr
     password: str = Field(min_length=8)
-    recaptcha_token: str
 
     @field_validator("password")
     @classmethod
@@ -29,7 +28,6 @@ class UserCreate(BaseModel):
 class UserLogin(BaseModel):
     email: EmailStr
     password: str
-    recaptcha_token: str
 
 class UserResponse(BaseModel):
     id: int
