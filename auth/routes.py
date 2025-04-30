@@ -82,9 +82,6 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
         detail="Could not validate credentials",
     )
     try:
-        result = create_assessment(RECAPTCHA_PROJECT_ID, RECAPTCHA_SITE_KEY, user.recaptcha_token, "register")
-        if result.risk_analysis.score < RECAPTCHA_MIN_SCORE:
-            raise HTTPException(status_code=400, detail="Low reCAPTCHA score — possible bot.")
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         email: str = payload.get("sub")
         if email is None:
@@ -96,6 +93,7 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
     if user is None:
         raise credentials_exception
     return user
+
 
 @auth_router.get("/protected")
 def protected_route(current_user: User = Depends(get_current_user)):
