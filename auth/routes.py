@@ -14,10 +14,6 @@ load_dotenv()
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = os.getenv("ALGORITHM")
-RECAPTCHA_PROJECT_ID = os.getenv("RECAPTCHA_PROJECT_ID")
-RECAPTCHA_SECRET_KEY = os.getenv("RECAPTCHA_SECRET_KEY")
-RECAPTCHA_SITE_KEY = os.getenv("RECAPTCHA_SITE_KEY")
-RECAPTCHA_MIN_SCORE = os.getenv("RECAPTCHA_MIN_SCORE")
 
 auth_router = APIRouter()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
@@ -41,14 +37,6 @@ def create_access_token(data: dict, expires_delta: timedelta = None):
 @auth_router.post("/register", response_model=UserResponse)
 def register_user(user: UserCreate, db: Session = Depends(get_db)):
     try:
-        
-        # In your register route:
-        verify_recaptcha(
-            token=user.recaptcha_token,
-            secret_key=RECAPTCHA_SECRET_KEY,
-            expected_action="register",
-            min_score=RECAPTCHA_MIN_SCORE 
-        )
         # Check if email or username already exists
         existing_user = db.query(User).filter(User.email == user.email).first()
         if existing_user:
@@ -75,12 +63,6 @@ def register_user(user: UserCreate, db: Session = Depends(get_db)):
 @auth_router.post("/login")
 def login_user(user: UserLogin, db: Session = Depends(get_db)):
     try:
-        verify_recaptcha(
-            token=user.recaptcha_token,
-            secret_key=RECAPTCHA_SECRET_KEY,
-            expected_action="login",
-            min_score=RECAPTCHA_MIN_SCORE
-        )
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
     db_user = db.query(User).filter(User.email == user.email).first()
