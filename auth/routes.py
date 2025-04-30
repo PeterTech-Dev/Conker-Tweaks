@@ -45,8 +45,9 @@ def register_user(user: UserCreate, db: Session = Depends(get_db)):
         # In your register route:
         verify_recaptcha(
             token=user.recaptcha_token,
-            secret_key=os.getenv("RECAPTCHA_SECRET_KEY"),
-            expected_action="register"
+            secret_key=RECAPTCHA_SECRET_KEY,
+            expected_action="register",
+            min_score=RECAPTCHA_MIN_SCORE 
         )
         # Check if email or username already exists
         existing_user = db.query(User).filter(User.email == user.email).first()
@@ -76,8 +77,9 @@ def login_user(user: UserLogin, db: Session = Depends(get_db)):
     try:
         verify_recaptcha(
             token=user.recaptcha_token,
-            secret_key=os.getenv("RECAPTCHA_SECRET_KEY"),
-            expected_action="login"
+            secret_key=RECAPTCHA_SECRET_KEY,
+            expected_action="login",
+            min_score=RECAPTCHA_MIN_SCORE
         )
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
