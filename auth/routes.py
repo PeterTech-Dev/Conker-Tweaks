@@ -7,6 +7,7 @@ from passlib.context import CryptContext
 from jose import JWTError, jwt
 from datetime import datetime, timedelta
 from fastapi.security import OAuth2PasswordBearer
+from utils.recaptcha import verify_recaptcha
 import os
 from dotenv import load_dotenv
 load_dotenv()
@@ -39,11 +40,13 @@ def create_access_token(data: dict, expires_delta: timedelta = None):
 @auth_router.post("/register", response_model=UserResponse)
 def register_user(user: UserCreate, db: Session = Depends(get_db)):
     try:
-
-        result = create_assessment(RECAPTCHA_PROJECT_ID, RECAPTCHA_SITE_KEY, user.recaptcha_token, "register")
-        if result.risk_analysis.score < RECAPTCHA_MIN_SCORE:
-            raise HTTPException(status_code=400, detail="Low reCAPTCHA score — possible bot.")
-
+        
+        # In your register route:
+        verify_recaptcha(
+            token=user.recaptcha_token,
+            secret_key=os.getenv("RECAPTCHA_SECRET_KEY"),
+            expected_action="register"
+        )
         # Check if email or username already exists
         existing_user = db.query(User).filter(User.email == user.email).first()
         if existing_user:
@@ -69,6 +72,11 @@ def register_user(user: UserCreate, db: Session = Depends(get_db)):
 # Login route
 @auth_router.post("/login")
 def login_user(user: UserLogin, db: Session = Depends(get_db)):
+    verify_recaptcha(
+        token=user.recaptcha_token,
+        secret_key=os.getenv("RECAPTCHA_SECRET_KEY"),
+        expected_action="register"
+    )
     db_user = db.query(User).filter(User.email == user.email).first()
     if not db_user or not verify_password(user.password, db_user.hashed_password):
         raise HTTPException(status_code=401, detail="Invalid email or password")
