@@ -238,8 +238,6 @@ async function finishLogin(token) {
           body: JSON.stringify({ username, email, password })
         });
     
-        const data = await response.json();
-    
         if (!response.ok) {
           const registerError = document.getElementById('register-error');
 
