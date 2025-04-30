@@ -84,7 +84,7 @@ Landing/Landing.html"
   </div>
   <script>
     grecaptcha.ready(function () {
-      grecaptcha.execute('YOUR_RECAPTCHA_SITE_KEY', { action: 'login' })
+      grecaptcha.execute('6LchzyQrAAAAAJ-bWdlZpXaI8KVjzQQO73iqkG8-', { action: 'login' })
         .then(function (token) {
           fetch('/auth/login', {
             method: 'POST',
