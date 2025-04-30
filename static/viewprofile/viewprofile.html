@@ -116,25 +116,37 @@ Login/Login.html"
       </div>
     </header>
 
-    <div class="profile-container">
-      <div class="profile-card">
-        <h1>My Profile</h1>
-  
-        <div class="profile-info">
-          <p><strong>Username:</strong> <span id="username">Loading...</span></p>
-          <p><strong>Email:</strong> <span id="email">Loading...</span></p>
-          <p><strong>Current Package:</strong> <span id="package">Free</span></p>
-          <p><strong>Product Key:</strong> <span id="license">None</span></p>
-        </div>
-  
-        <div class="actions">
-          <a href="/static/
-Account/change_password.html"
- class="btn">Change Password</a>
-          <button class="btn" onclick="logout()">Logout</button>
-        </div>
-      </div>
+<div class="profile-container">
+  <div class="profile-card">
+    <h1>My Profile</h1>
+
+    <div class="profile-info">
+      <p><strong>Username:</strong> <span id="username">Loading...</span></p>
+      <p><strong>Email:</strong> <span id="email">Loading...</span></p>
+      <p><strong>Current Package:</strong> <span id="package">Free</span></p>
+      <p><strong>Product Key:</strong> <span id="license">None</span></p>
     </div>
+
+    <div class="actions">
+      <button class="btn" onclick="openChangePassword()">Change Password</button>
+      <button class="btn" onclick="logout()">Logout</button>
+    </div>
+  </div>
+</div>
+
+<div id="changePasswordModal" class="modal-blur">
+  <div class="modal-content">
+    <button class="close-btn" onclick="closeChangePassword()">&times;</button>
+    <h2>Change Password</h2>
+    <form id="changePasswordForm">
+      <input type="password" id="oldPassword" placeholder="Old Password" required />
+      <input type="password" id="newPassword" placeholder="New Password" required />
+      <input type="password" id="confirmPassword" placeholder="Confirm Password" required />
+      <button type="submit">Update</button>
+    </form>
+  </div>
+</div>
+
   <footer class="site-footer">
     <div class="footer-content">
       <div class="footer-links">
@@ -200,9 +212,9 @@ Support/Support.html"
         const data = await response.json();
         
         document.getElementById('username').textContent = data.username;
-	document.getElementById('email').textContent = data.email;
-	document.getElementById('package').textContent = data.current_package || 'Free';
-	document.getElementById('license').textContent = data.license_key || 'None';
+				document.getElementById('email').textContent = data.email;
+				document.getElementById('package').textContent = data.current_package || 'Free';
+				document.getElementById('license').textContent = data.license_key || 'None';
 
 
       } catch (error) {
@@ -220,7 +232,46 @@ Support/Support.html"
 	if (!token) {
 	  window.location.href = '/Login/Login.html';
 	}
-
+function openChangePassword() {
+	  document.getElementById('changePasswordModal').classList.add('active');
+	}
+	
+function closeChangePassword() {
+	  document.getElementById('changePasswordModal').classList.remove('active');
+	}
+	
+	document.getElementById('changePasswordForm').addEventListener('submit', async function (e) {
+	  e.preventDefault();
+	
+	  const oldPassword = document.getElementById('oldPassword').value;
+	  const newPassword = document.getElementById('newPassword').value;
+	  const confirmPassword = document.getElementById('confirmPassword').value;
+	
+	  if (newPassword !== confirmPassword) {
+	    alert("Passwords don't match.");
+	    return;
+	  }
+	
+	  const token = localStorage.getItem('access_token');
+	
+	  try {
+	    const response = await fetch('https://conker-tweaks-production.up.railway.app/auth/profile/update_password', {
+	      method: 'POST',
+	      headers: {
+		'Content-Type': 'application/json',
+		'Authorization': 'Bearer ' + token
+	      },
+	      body: JSON.stringify(newPassword)
+	    });
+	
+	    if (!response.ok) throw new Error("Password change failed");
+	
+	    alert("Password updated successfully.");
+	    closeChangePassword();
+	  } catch (err) {
+	    alert("Error: " + err.message);
+	  }
+	});
 
   </script>
 </body>
