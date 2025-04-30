@@ -139,9 +139,18 @@ Login/Login.html"
     <button class="close-btn" onclick="closeChangePassword()">&times;</button>
     <h2>Change Password</h2>
     <form id="changePasswordForm">
-      <input type="password" id="oldPassword" placeholder="Old Password" required />
-      <input type="password" id="newPassword" placeholder="New Password" required />
-      <input type="password" id="confirmPassword" placeholder="Confirm Password" required />
+			<div class="input-wrapper">
+			  <input type="password" id="oldPassword" placeholder="Old Password" required />
+			  <span class="toggle-password" onclick="togglePassword('oldPassword', this)">👁</span>
+			</div>
+			<div class="input-wrapper">
+			  <input type="password" id="newPassword" placeholder="New Password" required />
+			  <span class="toggle-password" onclick="togglePassword('newPassword', this)">👁</span>
+			</div>
+			<div class="input-wrapper">
+			  <input type="password" id="confirmPassword" placeholder="Confirm Password" required />
+			  <span class="toggle-password" onclick="togglePassword('confirmPassword', this)">👁</span>
+			</div>
       <button type="submit">Update</button>
     </form>
   </div>
@@ -179,6 +188,16 @@ Support/Support.html"
   </footer>
 
   <script>
+		function togglePassword(id, icon) {
+		  const input = document.getElementById(id);
+		  if (input.type === "password") {
+		    input.type = "text";
+		    icon.textContent = "🙈";
+		  } else {
+		    input.type = "password";
+		    icon.textContent = "👁";
+		  }
+		}
     window.addEventListener('DOMContentLoaded', async function () {
       const token = localStorage.getItem('access_token');
 
