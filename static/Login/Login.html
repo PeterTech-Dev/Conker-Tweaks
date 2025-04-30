@@ -51,6 +51,7 @@ Landing/Landing.html"
           <path fill="#00e0ff" d="M11.24,24a2.262,2.262,0,0,1-.948-.212,2.18,2.18,0,0,1-1.2-2.622L10.653,16H6.975A3,3,0,0,1,4.1,12.131l3.024-10A2.983,2.983,0,0,1,10,0h3.693a2.6,2.6,0,0,1,2.433,3.511L14.443,8H17a3,3,0,0,1,2.483,4.684l-6.4,10.3A2.2,2.2,0,0,1,11.24,24Z"/>
         </svg>
         <h2>Login to Conker Tweaks</h2>
+        <ul id="login-error" class="error-box" style="display: none;"></ul>
         <form id="loginForm">
           <input type="email" id="email" placeholder="Email" required />
           <input type="password" id="password" placeholder="Password" required />
@@ -65,6 +66,7 @@ Landing/Landing.html"
         </form>
       </div>
       <div class="register-box" id="registerBox">
+        <ul id="register-error" class="error-box" style="display: none;"></ul>
         <svg class="logo-login" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
           <path fill="#00e0ff" d="M11.24,24a2.262,2.262,0,0,1-.948-.212,2.18,2.18,0,0,1-1.2-2.622L10.653,16H6.975A3,3,0,0,1,4.1,12.131l3.024-10A2.983,2.983,0,0,1,10,0h3.693a2.6,2.6,0,0,1,2.433,3.511L14.443,8H17a3,3,0,0,1,2.483,4.684l-6.4,10.3A2.2,2.2,0,0,1,11.24,24Z"/>
         </svg>
@@ -106,7 +108,9 @@ Landing/Landing.html"
         window.location.href = '/static/viewprofile/viewprofile.html';
       } catch (error) {
         console.error('Login error:', error);
-        alert('Login failed. Please try again.');
+        const loginError = document.getElementById('login-error');
+        loginError.innerHTML = `<li>Invalid email or password</li>`;
+        loginError.style.display = 'block';
       }
     });
     
@@ -118,6 +122,7 @@ Landing/Landing.html"
       const email = document.getElementById('regEmail').value;
       const password = document.getElementById('regPassword').value;
       const confirmPassword = document.getElementById('confirmPassword').value;
+      registerError.style.display = 'none';
     
       if (password !== confirmPassword) {
         alert('Passwords do not match.');
@@ -137,7 +142,17 @@ Landing/Landing.html"
         const data = await response.json();
     
         if (!response.ok) {
-          alert('Registration failed: ' + (data.detail?.[0]?.msg || 'Unknown error'));
+          const registerError = document.getElementById('register-error');
+
+          if (data.detail && Array.isArray(data.detail)) {
+            registerError.innerHTML = data.detail.map(err => `<li>${err.msg}</li>`).join('');
+          } else if (data.detail) {
+            registerError.innerHTML = `<li>${data.detail}</li>`;
+          } else {
+            registerError.innerHTML = `<li>Registration failed. Please try again.</li>`;
+          }
+          
+          registerError.style.display = 'block';
         } else {
           alert('Registration successful! Please login.');
           window.location.reload();
