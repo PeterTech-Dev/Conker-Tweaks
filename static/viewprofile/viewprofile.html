@@ -124,7 +124,7 @@ Login/Login.html"
           <p><strong>Username:</strong> <span id="username">Loading...</span></p>
           <p><strong>Email:</strong> <span id="email">Loading...</span></p>
           <p><strong>Current Package:</strong> <span id="package">Free</span></p>
-          <p><strong>Card on File:</strong> <span id="card">None</span></p>
+          <p><strong>Product Key:</strong> <span id="license">None</span></p>
         </div>
   
         <div class="actions">
@@ -200,11 +200,14 @@ Support/Support.html"
         const data = await response.json();
         
         document.getElementById('username').textContent = data.username;
-        document.getElementById('email').textContent = data.email;
+	document.getElementById('email').textContent = data.email;
+	document.getElementById('package').textContent = data.current_package || 'Free';
+	document.getElementById('license').textContent = data.license_key || 'None';
+
 
       } catch (error) {
         console.error('Error fetching profile:', error);
-        //window.location.href = "/Login/Login.html";
+        window.location.href = "/Login/Login.html";
       }
     });
 
