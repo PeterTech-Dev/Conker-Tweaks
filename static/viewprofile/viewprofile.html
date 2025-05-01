@@ -130,7 +130,8 @@ Login/Login.html"
     <div class="actions">
       <button class="btn" onclick="openChangePassword()">Change Password</button>
       <button class="btn" onclick="logout()">Logout</button>
-    </div>
+      <a href="/static/Admin/Dashboard.html" id="admin-btn" class="btn" style="display: none;">Go to Admin Dashboard</a>
+    </div>    
   </div>
 </div>
 
@@ -263,6 +264,9 @@ Support/Support.html"
 				document.getElementById('package').textContent = data.current_package || 'Free';
 				document.getElementById('license').textContent = data.license_key || 'None';
 
+        if (data.is_admin && data.has_2fa) {
+          document.getElementById('admin-btn').style.display = 'inline-block';
+        }
 
       } catch (error) {
         console.error('Error fetching profile:', error);
