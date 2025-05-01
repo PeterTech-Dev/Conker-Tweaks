@@ -14,8 +14,8 @@ fetch("https://conker-tweaks-production.up.railway.app/auth/profile", {
   if (!user.is_admin || !user.has_2fa) {
     window.location.href = "/static/Landing/Landing.html";
   } else {
-    document.body.style.display = "block"; // reveal page
-    loadAdminData(); // call API for stats
+    document.getElementById("admin-main").style.display = "block";
+    loadAdminData();
   }
 })
 .catch(() => {
