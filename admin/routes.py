@@ -47,14 +47,24 @@ def add_license_key(license: LicenseKeyCreate, db: Session = Depends(get_db)):
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
 
-    new_key = LicenseKey(
-        key=license.key,
-        product_id=license.product_id
-    )
-    db.add(new_key)
+    keys = license.key.splitlines()  # support newline-separated keys
+    for key in keys:
+        new_key = LicenseKey(key=key.strip(), product_id=product.id)
+        db.add(new_key)
+    product.stock += len(keys)
     db.commit()
-    return {"message": "License key added"}
+    return {"message": f"{len(keys)} license keys added"}
 
+@admin_router.delete("/delete-product/{product_id}")
+def delete_product(product_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    is_admin(current_user)
+    product = db.query(Product).filter(Product.id == product_id).first()
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+
+    db.delete(product)
+    db.commit()
+    return {"message": "Product deleted"}
 
 # List all products
 @admin_router.get("/list-products")

@@ -53,11 +53,13 @@ window.addEventListener("DOMContentLoaded", () => {
             Stock: ${product.stock}<br>
             License: ${product.needs_license ? "Yes" : "No"}<br>
             <button onclick="addKey(${product.id})">Add License Key</button>
+            <button onclick="deleteProduct(${product.id})">Delete</button>
           `;
           list.appendChild(div);
         });
       });
   }
+
 
   document.getElementById("add-product-form").addEventListener("submit", async function (e) {
     e.preventDefault();
@@ -107,4 +109,18 @@ window.addEventListener("DOMContentLoaded", () => {
         alert("License key added");
       });
   };
+  window.deleteProduct = function(productId) {
+    if (!confirm("Are you sure you want to delete this product?")) return;
+  
+    fetch(`https://conker-tweaks-production.up.railway.app/admin/delete-product/${productId}`, {
+      method: "DELETE",
+      headers: { "Authorization": "Bearer " + token }
+    })
+    .then(res => res.json())
+    .then(() => {
+      alert("Product deleted");
+      loadAdminData(token);
+    });
+  }
+  
 });

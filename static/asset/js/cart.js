@@ -59,24 +59,32 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('checkout-products').addEventListener('click', handleCartButtonClick);
 });
 
-function directPurchase(name, price) {
-  const cart = JSON.parse(localStorage.getItem('cart')) || [];
+function directPurchase(id, name, price) {
+  fetch(`https://conker-tweaks-production.up.railway.app/product/${id}`)
+    .then(res => res.json())
+    .then(product => {
+      if (product.stock === 0) {
+        alert("Sorry, this product is out of stock.");
+        return;
+      }
 
-  // Check if the item already exists (optional)
-  const existingItem = cart.find(item => item.name === name);
-  if (existingItem) {
-    existingItem.quantity += 1;
-  } else {
-    cart.push({
-      name: name,
-      price: price,
-      quantity: 1
+      // Continue with adding to cart...
+      const cart = JSON.parse(localStorage.getItem('cart')) || [];
+      const existingItem = cart.find(item => item.id === id);
+      if (existingItem) {
+        if (product.stock !== -1 && existingItem.quantity >= product.stock) {
+          alert("You’ve reached the stock limit.");
+          return;
+        }
+        existingItem.quantity += 1;
+      } else {
+        cart.push({ id, name, price, quantity: 1 });
+      }
+
+      localStorage.setItem('cart', JSON.stringify(cart));
+      window.location.href = "/static/Cart/cart.html";
     });
-  }
-
-  localStorage.setItem('cart', JSON.stringify(cart));
-
-  // Redirect to checkout
-  window.location.href = "/static/Cart/cart.html";
 }
+
+
 
