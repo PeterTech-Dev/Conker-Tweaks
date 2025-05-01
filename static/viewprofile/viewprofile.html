@@ -258,14 +258,19 @@ Support/Support.html"
 
 
         const data = await response.json();
+        console.log("Profile data:", data);
         
         document.getElementById('username').textContent = data.username;
 				document.getElementById('email').textContent = data.email;
 				document.getElementById('package').textContent = data.current_package || 'Free';
 				document.getElementById('license').textContent = data.license_key || 'None';
 
-        if (data.is_admin && data.has_2fa) {
-          document.getElementById('admin-btn').style.display = 'inline-block';
+        if (data.is_admin === true && data.has_2fa === true) {
+          const adminBtn = document.getElementById('admin-btn');
+          if (adminBtn) {
+            adminBtn.style.display = 'inline-block';
+            adminBtn.style.visibility = 'visible';
+          }
         }
 
       } catch (error) {
