@@ -117,17 +117,17 @@ document.getElementById('loginForm').addEventListener('submit', async function (
       body: JSON.stringify({ email, password })
     });
 
-    if (!loginRes.ok) {
-      let data;
-      try {
-        data = await loginRes.json();
-      } catch {
-        const text = await loginRes.text();
-        console.error("Raw response:", text);
-        alert("Something went wrong on the server.");
-        return;
-      }
+    let data;
+    try {
+      data = await loginRes.json();
+    } catch {
+      const text = await loginRes.text();
+      console.error("Raw response:", text);
+      alert("Something went wrong on the server.");
+      return;
+    }
 
+    if (!loginRes.ok) {
       if (data.detail === "2FA code required") {
         pendingLogin = { email, password };
         document.getElementById('twofa-modal').style.display = 'flex';
@@ -138,7 +138,7 @@ document.getElementById('loginForm').addEventListener('submit', async function (
       }
     }
 
-    const data = await loginRes.json(); // if successful
+    // ✅ If login successful without 2FA
     finishLogin(data.access_token);
 
   } catch (err) {
