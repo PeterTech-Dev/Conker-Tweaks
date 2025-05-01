@@ -118,7 +118,25 @@ Login/Login.html"
 
     <main style="display:none;" id="admin-main">
       <h1>Admin Dashboard</h1>
-      <div id="dashboard-container"></div>
+      <div id="dashboard-container">
+        <div id="stats"></div>
+      
+        <h2>Products</h2>
+        <div id="product-list"></div>
+      
+        <h2>Add Product</h2>
+        <form id="add-product-form">
+          <input type="text" id="name" placeholder="Product name" required>
+          <input type="text" id="description" placeholder="Description" required>
+          <input type="number" id="price" placeholder="Price" required>
+          <input type="number" id="stock" placeholder="Stock" required>
+          <input type="text" id="download_link" placeholder="Download link" required>
+          <label>
+            <input type="checkbox" id="needs_license"> Requires License Key
+          </label>
+          <button type="submit">Add Product</button>
+        </form>
+      </div>    
     </main>
     
     <script src="/static/admin/Dashboard.js"></script>
