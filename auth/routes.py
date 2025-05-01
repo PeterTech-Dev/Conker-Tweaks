@@ -71,7 +71,9 @@ def login_user(user: UserLogin, db: Session = Depends(get_db)):
 
     if not verify_password(user.password, db_user.hashed_password):
         raise HTTPException(status_code=401, detail="Invalid email or password")
-
+    print("🔐 Stored Secret:", db_user.twofa_secret)
+    print("🔐 User Provided Code:", user.code)
+    print("🔐 Backend Current TOTP:", pyotp.TOTP(db_user.twofa_secret).now())
     if db_user.is_admin and db_user.has_2fa:
         if not user.code:
             raise HTTPException(status_code=401, detail="2FA code required")
