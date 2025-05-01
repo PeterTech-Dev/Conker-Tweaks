@@ -138,7 +138,7 @@ document.getElementById('loginForm').addEventListener('submit', async function (
       }
     }
 
-    // ✅ If login successful without 2FA
+    // If login OK and no 2FA needed
     finishLogin(data.access_token);
 
   } catch (err) {
@@ -151,27 +151,28 @@ async function submit2FACode() {
   const code = document.getElementById('modal-2fa-code').value;
 
   if (!pendingLogin) {
-    alert("Something went wrong. Please try logging in again.");
+    alert("Please try logging in again.");
     return;
   }
 
   try {
-    const loginRes = await fetch('https://conker-tweaks-production.up.railway.app/auth/login', {
+    const res = await fetch('https://conker-tweaks-production.up.railway.app/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ...pendingLogin, code })
     });
 
-    const data = await loginRes.json();
+    const data = await res.json();
 
-    if (!loginRes.ok) {
+    if (!res.ok) {
       alert(data.detail || "2FA verification failed.");
       return;
     }
 
     finishLogin(data.access_token);
+
   } catch (err) {
-    alert("Something went wrong while verifying 2FA.");
+    alert("2FA failed.");
     console.error(err);
   }
 }
