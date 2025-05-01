@@ -115,3 +115,7 @@ def add_product(product: ProductCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(new_product)
     return {"message": "Product added", "product_id": new_product.id}
+
+@admin_router.get("/ping")
+def ping():
+    return {"status": "admin route works"}
