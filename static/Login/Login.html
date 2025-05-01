@@ -93,6 +93,15 @@ Landing/Landing.html"
   </div>
 
   <script>
+function toggleForms(event) {
+  event.preventDefault();
+
+  const loginBox = document.querySelector('.login-box');
+  const registerBox = document.getElementById('registerBox');
+
+  loginBox.classList.toggle('hidden');
+  registerBox.classList.toggle('active');
+}
 let pendingLogin = null;
 
 document.getElementById('loginForm').addEventListener('submit', async function (e) {
