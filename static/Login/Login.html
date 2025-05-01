@@ -90,7 +90,7 @@ Landing/Landing.html"
       <input type="text" id="modal-2fa-code" placeholder="6-digit code" required />
       <button onclick="submit2FACode()">Verify</button>
     </div>
-  </div>
+  </div>  
 
   <script>
 function toggleForms(event) {
@@ -128,7 +128,7 @@ document.getElementById('loginForm').addEventListener('submit', async function (
     }
 
     if (!loginRes.ok) {
-      if (data.detail === "2FA code required") {
+      if (data.detail && data.detail.includes("2FA")) {
         pendingLogin = { email, password };
         document.getElementById('twofa-modal').style.display = 'flex';
         return;
