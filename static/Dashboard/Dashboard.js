@@ -124,3 +124,16 @@ window.addEventListener("DOMContentLoaded", () => {
   }
   
 });
+fetch("/admin/dashboard", {
+  headers: { "Authorization": "Bearer " + token }
+})
+.then(res => {
+  if (!res.ok) throw new Error("Failed to load admin dashboard");
+  return res.json();
+})
+.then(data => { /* render */ })
+.catch(err => {
+  console.error(err);
+  alert("Error loading admin panel");
+});
+

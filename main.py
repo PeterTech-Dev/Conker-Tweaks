@@ -4,7 +4,7 @@ from fastapi.security import OAuth2PasswordBearer
 
 from auth.routes import auth_router
 from products.routes import products_router
-from admin.routes import admin_router
+from owner.routes import admin_router
 from orders.routes import order_router
 from orders.webhooks import router as webhook_router
 
