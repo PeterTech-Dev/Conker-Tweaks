@@ -17,3 +17,4 @@ class User(Base):
     license_key = Column(String, nullable=True)
     is_admin = Column(Boolean, default=False)
     has_2fa = Column(Boolean, default=False)
+    twofa_secret = Column(String, nullable=True)
