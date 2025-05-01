@@ -1,25 +1,21 @@
-const token = localStorage.getItem("access_token");
+window.addEventListener("DOMContentLoaded", () => {
+  const token = localStorage.getItem("access_token");
+  if (!token) return window.location.href = "/static/Login/Login.html";
 
-if (!token) {
-  window.location.href = "/static/Login/Login.html";
-}
-
-fetch("https://conker-tweaks-production.up.railway.app/auth/profile", {
-  headers: {
-    "Authorization": "Bearer " + token
-  }
-})
-.then(res => res.json())
-.then(user => {
-  if (!user.is_admin || !user.has_2fa) {
-    window.location.href = "/static/Landing/Landing.html";
-  } else {
-    document.getElementById("admin-main").style.display = "block";
-    loadAdminData();
-  }
-})
-.catch(() => {
-  window.location.href = "/static/Login/Login.html";
+  fetch("https://conker-tweaks-production.up.railway.app/auth/profile", {
+    headers: { "Authorization": "Bearer " + token }
+  })
+    .then(res => res.json())
+    .then(user => {
+      console.log("User profile:", user); // <-- Add this!
+      if (!user.is_admin || !user.has_2fa) {
+        window.location.href = "/static/Landing/Landing.html";
+      } else {
+        document.getElementById("admin-main").style.display = "block";
+        loadAdminData();
+      }
+    })
+    .catch(() => window.location.href = "/static/Login/Login.html");
 });
 
 function loadAdminData() {
