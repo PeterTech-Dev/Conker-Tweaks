@@ -221,7 +221,8 @@ paypal.Buttons({
 
   createOrder: function(data, actions) {
   const cart = JSON.parse(localStorage.getItem('cart')) || [];
-  return fetch("/order/api/orders", {
+  const token = localStorage.getItem('access_token');
+  return fetch("https://conker-tweaks-production.up.railway.app/order/api/orders", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -246,7 +247,7 @@ paypal.Buttons({
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          // 'Authorization': `Bearer ${token}`, // Optional if your backend doesn’t need auth
+          'Authorization': `Bearer ${token}`
         }
       }
     );
