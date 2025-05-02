@@ -24,7 +24,7 @@ PAYPAL_CLIENT_SECRET = os.getenv("PAYPAL_CLIENT_SECRET")
 environment = SandboxEnvironment(client_id=PAYPAL_CLIENT_ID, client_secret=PAYPAL_CLIENT_SECRET)
 paypal_client = PayPalHttpClient(environment)
 
-def get_paypal_access_token():
+async def get_paypal_access_token():
     url = "https://api-m.sandbox.paypal.com/v1/oauth2/token"
     response = requests.post(
         url,
