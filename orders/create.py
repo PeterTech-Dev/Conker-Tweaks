@@ -8,6 +8,8 @@ from database import SessionLocal
 from models.products import Product
 from models.licenses import LicenseKey
 import stripe
+from paypalcheckoutsdk.orders import OrdersCreateRequest
+from paypalcheckoutsdk.core import PayPalHttpClient, SandboxEnvironment
 
 order_router = APIRouter()
 router = APIRouter(
@@ -21,6 +23,9 @@ PAYPAL_CLIENT_SECRET = os.getenv("PAYPAL_CLIENT_SECRET")
 stripe.api_key = os.getenv("STRIPE_API_KEY")
 PAYPAL_OAUTH_API = "https://api-m.sandbox.paypal.com/v1/oauth2/token"
 PAYPAL_ORDERS_API = "https://api-m.sandbox.paypal.com/v2/checkout/orders"
+
+environment = SandboxEnvironment(client_id=PAYPAL_CLIENT_ID, client_secret=PAYPAL_CLIENT_SECRET)
+paypal_client = PayPalHttpClient(environment)
 
 async def get_paypal_access_token():
     if not PAYPAL_CLIENT_ID or not PAYPAL_CLIENT_SECRET:
@@ -42,6 +47,39 @@ async def get_paypal_access_token():
             raise HTTPException(status_code=500, detail="Failed to fetch PayPal access token")
 
         return response.json()["access_token"]
+    
+@order_router.post("/orders")
+async def create_order(request: Request):
+    body = await request.json()
+    cart = body.get("cart", [])
+
+    # 🧠 You could calculate totals or verify cart here
+    # For now we’ll just make a basic PayPal order:
+    total = sum(item["price"] * item["quantity"] for item in cart)
+    total = round(total, 2)
+
+    create_request = OrdersCreateRequest()
+    create_request.prefer("return=representation")
+    create_request.request_body(
+        {
+            "intent": "CAPTURE",
+            "purchase_units": [
+                {
+                    "amount": {
+                        "currency_code": "USD",
+                        "value": f"{total:.2f}",
+                    }
+                }
+            ]
+        }
+    )
+
+    try:
+        response = paypal_client.execute(create_request)
+        order = response.result
+        return {"id": order.id}
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"error": str(e)})
 
 @order_router.post("/create/stripe")
 async def create_stripe_checkout(request: Request):
