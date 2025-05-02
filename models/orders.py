@@ -10,3 +10,4 @@ class Order(Base):
     product_id = Column(Integer, ForeignKey("products.id"), nullable=False)
     amount_paid = Column(Float, nullable=False)
     timestamp = Column(DateTime(timezone=True), server_default=func.now())
+    paypal_order_id = Column(String, unique=True, index=True)
