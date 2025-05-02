@@ -23,6 +23,7 @@ PAYPAL_CLIENT_ID = os.getenv("PAYPAL_CLIENT_ID")
 PAYPAL_CLIENT_SECRET = os.getenv("PAYPAL_CLIENT_SECRET")
 environment = SandboxEnvironment(client_id=PAYPAL_CLIENT_ID, client_secret=PAYPAL_CLIENT_SECRET)
 paypal_client = PayPalHttpClient(environment)
+PAYPAL_API_BASE = "https://api-m.sandbox.paypal.com"
 
 async def get_paypal_access_token():
     url = "https://api-m.sandbox.paypal.com/v1/oauth2/token"
@@ -97,13 +98,11 @@ async def capture_order(order_id: str, db: Session = Depends(get_db)):
         if not transaction_id:
             raise HTTPException(status_code=400, detail="Transaction ID not found")
 
-        # 🧠 Find the order in your database if you saved it during createOrder()
-        # If you don't have a database order, you can skip this
         order = db.query(Order).filter(Order.order_id == order_id).first()
 
         assigned_email = None
         if order:
-            assigned_email = order.email  # If you stored email during createOrder
+            assigned_email = order.email
 
         # 🔥 Generate a license key based on transaction ID
         license_key_value = f"LICENSE-{transaction_id[-8:]}"

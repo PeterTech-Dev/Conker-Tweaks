@@ -230,7 +230,7 @@ paypal.Buttons({
   })
   .then((res) => res.json())
   .then((data) => {
-    return data.id; // Must return PayPal order ID
+    return data.id;
   })
   .catch((err) => {
     console.error("Order creation failed", err);
