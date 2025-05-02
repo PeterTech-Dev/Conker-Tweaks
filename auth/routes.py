@@ -4,10 +4,11 @@ from schemas.users import UserCreate, UserLogin, UserResponse, PasswordUpdateReq
 from models.users import User
 from database import get_db
 from passlib.context import CryptContext
-from jose import JWTError, jwt
+from jose import jwt, JWTError, ExpiredSignatureError
 from datetime import datetime, timedelta
 from fastapi.security import OAuth2PasswordBearer
 from models.products import Product
+from models.licenses import LicenseKey
 import pyotp
 import qrcode
 from fastapi.responses import StreamingResponse
@@ -23,6 +24,12 @@ auth_router = APIRouter()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+credentials_exception = HTTPException(
+    status_code=status.HTTP_401_UNAUTHORIZED,
+    detail="Could not validate credentials",
+    headers={"WWW-Authenticate": "Bearer"},
+)
 
 def hash_password(password: str):
     return pwd_context.hash(password)
