@@ -98,7 +98,7 @@ async def capture_order(order_id: str, db: Session = Depends(get_db)):
         if not transaction_id:
             raise HTTPException(status_code=400, detail="Transaction ID not found")
 
-        order = db.query(Order).filter(Order.order_id == order_id).first()
+        order = db.query(Order).filter(Order.paypal_order_id == order_id).first()
 
         assigned_email = None
         if order:
