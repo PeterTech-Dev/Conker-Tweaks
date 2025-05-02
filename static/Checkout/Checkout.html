@@ -221,7 +221,7 @@ paypal.Buttons({
 
   createOrder: function(data, actions) {
   const cart = JSON.parse(localStorage.getItem('cart')) || [];
-  return fetch("/api/orders", {
+  return fetch("/order/api/orders", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

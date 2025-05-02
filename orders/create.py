@@ -8,7 +8,6 @@ from database import SessionLocal
 from models.products import Product
 from models.licenses import LicenseKey
 import stripe
-from paypalcheckoutsdk.orders import OrdersCreateRequest
 from paypalcheckoutsdk.core import PayPalHttpClient, SandboxEnvironment
 
 order_router = APIRouter()
