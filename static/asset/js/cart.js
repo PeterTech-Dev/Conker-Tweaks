@@ -4,6 +4,7 @@ function updateCartDisplay() {
   const cartItemsDiv = document.getElementById('checkout-products');
   const cartTotalSpan = document.getElementById('cart-total');
   cartItemsDiv.innerHTML = '';
+
   let total = 0;
 
   if (cart.length === 0) {
@@ -13,7 +14,8 @@ function updateCartDisplay() {
   }
 
   cart.forEach((item, index) => {
-    total += item.price * item.quantity;
+    const itemTotal = item.price * item.quantity;
+    total += itemTotal;
 
     const itemDiv = document.createElement('div');
     itemDiv.className = 'checkout-item';
@@ -25,11 +27,14 @@ function updateCartDisplay() {
         <span class="qty-number" id="qty-${index}">${item.quantity}</span>
         <button class="qty-btn increase" data-index="${index}">+</button>
       </div>
-      <div class="item-price" id="price-${index}">$${(item.price * item.quantity).toFixed(2)}</div>
+      <div class="item-price" id="price-${index}">$${itemTotal.toFixed(2)}</div>
     `;
 
     cartItemsDiv.appendChild(itemDiv);
   });
+
+  // ✅ Save to localStorage after re-render
+  localStorage.setItem('cart', JSON.stringify(cart));
 
   cartTotalSpan.textContent = `$${total.toFixed(2)}`;
 }
@@ -41,13 +46,14 @@ function handleCartButtonClick(event) {
     if (!isNaN(index) && cart[index]) {
       if (event.target.classList.contains('increase')) {
         cart[index].quantity++;
-      } else if (event.target.classList.contains('decrease') && cart[index].quantity > 1) {
+      } else if (event.target.classList.contains('decrease')) {
         cart[index].quantity--;
+        if (cart[index].quantity <= 0) {
+          cart.splice(index, 1); // remove item from cart
+        }
       }
 
-      // Save and Re-render
-      localStorage.setItem('cart', JSON.stringify(cart));
-      updateCartDisplay(); // 💥 FULL re-render the cart (qty, price, total)
+      updateCartDisplay(); // 💥 re-renders AND saves cart
     }
   }
 }
@@ -61,6 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
     cartContainer.addEventListener('click', handleCartButtonClick);
   }
 });
+
 
 
 function directPurchase(id, name, price) {
