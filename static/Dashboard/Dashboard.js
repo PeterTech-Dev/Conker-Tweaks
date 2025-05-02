@@ -56,7 +56,7 @@ window.addEventListener("DOMContentLoaded", () => {
             div.classList.add("pricing-card");
             div.innerHTML = `
               <h3>${product.name}</h3>
-              <h2 class="price">R${product.price}</h2>
+              <h2 class="price">$${Number(product.price).toFixed(2)}</h2>
               <div class="stock-available">${isInfinite ? "∞ Available" : `${product.stock} Available`}</div>
               <ul>${descHTML}</ul>
               <button class="purchase-btn" onclick="addKey(${product.id})">Add License Key</button>
@@ -72,11 +72,13 @@ window.addEventListener("DOMContentLoaded", () => {
   document.getElementById("add-product-form").addEventListener("submit", async function (e) {
     e.preventDefault();
 
+    const infiniteStock = document.getElementById("infinite_stock").checked;
+
     const product = {
       name: document.getElementById("name").value,
       description: document.getElementById("description").value,
       price: parseFloat(document.getElementById("price").value),
-      stock: parseInt(document.getElementById("stock").value),
+      stock: infiniteStock ? -1 : parseInt(document.getElementById("stock").value),
       download_link: document.getElementById("download_link").value,
       needs_license: document.getElementById("needs_license").checked
     };

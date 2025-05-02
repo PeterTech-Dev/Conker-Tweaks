@@ -127,9 +127,14 @@ Login/Login.html"
         <h2>Add Product</h2>
         <form id="add-product-form">
           <input type="text" id="name" placeholder="Product name" required>
-          <input type="text" id="description" placeholder="Description" required>
+          <textarea id="description" placeholder="Enter one line per bullet point" rows="5" required></textarea>
           <input type="number" id="price" placeholder="Price" required>
-          <input type="number" id="stock" placeholder="Stock" required>
+          <div style="display: flex; gap: 10px; align-items: center;">
+            <input type="number" id="stock" placeholder="Stock" required style="flex: 1;">
+            <label>
+              <input type="checkbox" id="infinite_stock"> Infinite Stock
+            </label>
+          </div>          
           <input type="text" id="download_link" placeholder="Download link" required>
           <label>
             <input type="checkbox" id="needs_license"> Requires License Key
