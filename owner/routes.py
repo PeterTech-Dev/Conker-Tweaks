@@ -8,9 +8,8 @@ from auth.routes import get_current_user
 from models.users import User
 from models.products import Product
 from models.purchases import Purchase
-from typing import List
 
-owner_router = APIRouter(prefix="/owner", tags=["Owner"])
+owner_router = APIRouter()
 
 def is_admin(user: User):
     if not user.is_admin:
