@@ -37,25 +37,28 @@ def get_paypal_access_token():
 @order_router.post("/orders")
 async def create_order(request: Request):
     try:
-        access_token = await get_paypal_access_token()
         body = await request.json()
-        cart = body.get("cart", [])
+        print("Received PayPal order creation request:", body)
 
-        total_amount = sum(item['price'] * item['quantity'] for item in cart)
-        total_amount = format(total_amount, '.2f')
-
+        access_token = await get_paypal_access_token()
         headers = {
-            "Authorization": f"Bearer {access_token}",
             "Content-Type": "application/json",
-            "Prefer": "return=representation"
+            "Authorization": f"Bearer {access_token}",
         }
-        order_data = {
+
+        items = body.get("cart", [])
+        if not items:
+            raise ValueError("Cart is empty or missing.")
+
+        total_amount = sum(float(item["price"]) * int(item["quantity"]) for item in items)
+
+        order_payload = {
             "intent": "CAPTURE",
             "purchase_units": [
                 {
                     "amount": {
                         "currency_code": "USD",
-                        "value": total_amount
+                        "value": f"{total_amount:.2f}"
                     }
                 }
             ]
@@ -63,20 +66,21 @@ async def create_order(request: Request):
 
         async with httpx.AsyncClient() as client:
             response = await client.post(
-                "https://api-m.sandbox.paypal.com/v2/checkout/orders",
-                headers=headers,
-                json=order_data
+                f"{PAYPAL_API_BASE}/v2/checkout/orders",
+                json=order_payload,
+                headers=headers
             )
-            if response.status_code >= 400:
-                raise HTTPException(status_code=500, detail="Failed to create PayPal order")
-            
-            paypal_order = response.json()
-            # ✨ ONLY return the PayPal order ID
-            return {"id": paypal_order["id"]}
+
+        if response.status_code != 201:
+            print("PayPal response error:", response.status_code, response.text)
+            raise HTTPException(status_code=response.status_code, detail="Failed to create PayPal order")
+
+        return response.json()
 
     except Exception as e:
-        print(e)
-        return JSONResponse(status_code=500, content={"error": str(e)})
+        print("💥 PayPal order creation error:", e)
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 @order_router.post("/orders/{order_id}/capture")
 async def capture_order(order_id: str, db: Session = Depends(get_db)):
