@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer
+from fastapi.routing import APIRoute
 
 from auth.routes import auth_router
 from products.routes import products_router
@@ -21,7 +22,7 @@ print("🔨 Checking database tables...")
 Base.metadata.create_all(bind=engine)
 
 app.include_router(auth_router, prefix="/auth", tags=["Auth"])
-app.include_router(products_router, prefix="/products", tags=["Products"])
+app.include_router(products_router)
 app.include_router(owner_router, prefix="/owner", tags=["Owner"])
 app.include_router(order_router)
 app.include_router(webhook_router, prefix="/webhooks")
@@ -55,3 +56,8 @@ app.add_middleware(
 )
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
+
+# Debugger
+for route in app.routes:
+    if isinstance(route, APIRoute):
+        print(f"Route: {route.path} [{route.methods}]")
