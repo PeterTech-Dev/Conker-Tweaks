@@ -61,8 +61,8 @@ async def create_stripe_checkout(request: Request):
             'quantity': 1,
         }],
         mode='payment',
-        success_url="http://localhost:3000/Checkout/thankyou.html",
-        cancel_url="http://localhost:3000/Checkout/Checkout.html",
+        success_url="http://https://conker-tweaks-production.up.railway.app/Checkout/thankyou.html",
+        cancel_url="http://https://conker-tweaks-production.up.railway.app/Checkout/Checkout.html",
     )
 
     return JSONResponse(content={"checkout_url": session.url}) 

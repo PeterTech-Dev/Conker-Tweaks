@@ -202,7 +202,7 @@ function getCartTotal() {
 
 async function payWithStripe() {
     const total = calculateTotal();
-    const response = await fetch('http://127.0.0.1:8000/order/api/create/stripe', { 
+    const response = await fetch('https://conker-tweaks-production.up.railway.app/order/api/create/stripe', { 
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ amount: total })
@@ -221,7 +221,7 @@ const paypalButtons = window.paypal.Buttons({
     createOrder: function(data, actions) {
         const cart = JSON.parse(localStorage.getItem('cart')) || [];
 
-        return fetch("http://127.0.0.1:8000/order/api/orders", {
+        return fetch("https://conker-tweaks-production.up.railway.app/order/api/orders", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -239,7 +239,7 @@ const paypalButtons = window.paypal.Buttons({
     onApprove: async function(data, actions) {
       const token = localStorage.getItem('access_token');
 
-      const response = await fetch(`http://127.0.0.1:8000/order/api/orders/${data.orderID}/capture`, {
+      const response = await fetch(`https://conker-tweaks-production.up.railway.app/order/api/orders/${data.orderID}/capture`, {
           method: 'POST',
           headers: {
               'Content-Type': 'application/json',
