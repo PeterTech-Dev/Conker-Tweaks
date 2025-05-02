@@ -1,6 +1,6 @@
-window.addEventListener("DOMContentLoaded", () => {
-  const token = localStorage.getItem("access_token"); // ✅ move this inside
+const token = localStorage.getItem("access_token"); // ✅ available globally
 
+window.addEventListener("DOMContentLoaded", () => {
   if (!token) {
     window.location.href = "/static/Login/Login.html";
     return;
@@ -17,15 +17,15 @@ window.addEventListener("DOMContentLoaded", () => {
         window.location.href = "/static/Landing/Landing.html";
       } else {
         document.getElementById("admin-main").style.display = "block";
-        loadAdminData(token); // pass token here if needed
+        loadAdminData();
       }
     })
     .catch(() => {
       window.location.href = "/static/Login/Login.html";
     });
 
-  function loadAdminData(token) {
-    fetch("https://conker-tweaks-production.up.railway.app/owner/dashboard", {
+  function loadAdminData() {
+    fetch("https://conker-tweaks-production.up.railway.app/admin/dashboard", {
       headers: { "Authorization": "Bearer " + token }
     })
       .then(res => res.json())
@@ -37,7 +37,7 @@ window.addEventListener("DOMContentLoaded", () => {
         `;
       });
 
-    fetch("https://conker-tweaks-production.up.railway.app/owner/list-products", {
+    fetch("https://conker-tweaks-production.up.railway.app/admin/list-products", {
       headers: { "Authorization": "Bearer " + token }
     })
       .then(res => res.json())
@@ -60,7 +60,6 @@ window.addEventListener("DOMContentLoaded", () => {
       });
   }
 
-
   document.getElementById("add-product-form").addEventListener("submit", async function (e) {
     e.preventDefault();
 
@@ -73,7 +72,7 @@ window.addEventListener("DOMContentLoaded", () => {
       needs_license: document.getElementById("needs_license").checked
     };
 
-    const res = await fetch("https://conker-tweaks-production.up.railway.app/owner/add_product", {
+    const res = await fetch("https://conker-tweaks-production.up.railway.app/admin/add_product", {
       method: "POST",
       headers: {
         "Authorization": "Bearer " + token,
@@ -84,7 +83,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
     if (res.ok) {
       alert("Product added");
-      loadAdminData(token);
+      loadAdminData();
       e.target.reset();
     } else {
       const err = await res.json();
@@ -96,7 +95,7 @@ window.addEventListener("DOMContentLoaded", () => {
     const key = prompt("Enter license key:");
     if (!key) return;
 
-    fetch("https://conker-tweaks-production.up.railway.app/owner/add_license_key", {
+    fetch("https://conker-tweaks-production.up.railway.app/admin/add_license_key", {
       method: "POST",
       headers: {
         "Authorization": "Bearer " + token,
@@ -109,31 +108,18 @@ window.addEventListener("DOMContentLoaded", () => {
         alert("License key added");
       });
   };
-  window.deleteProduct = function(productId) {
+
+  window.deleteProduct = function (productId) {
     if (!confirm("Are you sure you want to delete this product?")) return;
-  
-    fetch(`https://conker-tweaks-production.up.railway.app/owner/delete-product/${productId}`, {
+
+    fetch(`https://conker-tweaks-production.up.railway.app/admin/delete-product/${productId}`, {
       method: "DELETE",
       headers: { "Authorization": "Bearer " + token }
     })
-    .then(res => res.json())
-    .then(() => {
-      alert("Product deleted");
-      loadAdminData(token);
-    });
-  }
-  
+      .then(res => res.json())
+      .then(() => {
+        alert("Product deleted");
+        loadAdminData();
+      });
+  };
 });
-fetch("/owner/dashboard", {
-  headers: { "Authorization": "Bearer " + token }
-})
-.then(res => {
-  if (!res.ok) throw new Error("Failed to load admin dashboard");
-  return res.json();
-})
-.then(data => { /* render */ })
-.catch(err => {
-  console.error(err);
-  alert("Error loading admin panel");
-});
-
