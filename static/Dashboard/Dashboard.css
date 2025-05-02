@@ -1,19 +1,116 @@
+#admin-main {
+  display: none; /* shown after auth passes */
+  padding: 40px 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+  font-family: 'Outfit', sans-serif;
+  color: #fff;
+}
+
+#admin-main h1 {
+  font-size: 36px;
+  margin-bottom: 30px;
+  text-align: center;
+  color: #00e0ff;
+}
+
+#admin-main h2 {
+  font-size: 24px;
+  margin-top: 40px;
+  margin-bottom: 20px;
+  color: #00e0ff;
+}
+
+#dashboard-container {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+/* Stats section */
+#stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+}
+
+#stats .card {
+  background: #1d1e22;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 224, 255, 0.2);
+  min-width: 180px;
+  text-align: center;
+  font-size: 18px;
+}
+
+/* Product cards */
+#product-list {
+  display: grid;
+  gap: 20px;
+}
+
 #product-list .card {
   background: #1d1e22;
-  color: white;
-  padding: 15px;
+  padding: 20px;
   border-radius: 10px;
-  margin-bottom: 15px;
   box-shadow: 0 0 10px rgba(0, 224, 255, 0.2);
   line-height: 1.6;
 }
 
 #product-list .card button {
   margin-top: 10px;
+  margin-right: 10px;
   padding: 6px 12px;
   background-color: #00e0ff;
   color: black;
   border: none;
   border-radius: 6px;
   cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+#product-list .card button:hover {
+  background-color: #00bcd4;
+}
+
+/* Add product form */
+#add-product-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: #1d1e22;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 224, 255, 0.15);
+}
+
+#add-product-form input,
+#add-product-form label {
+  font-size: 16px;
+  color: #fff;
+}
+
+#add-product-form input {
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  background: #2a2e35;
+  color: #fff;
+}
+
+#add-product-form button {
+  background-color: #00e0ff;
+  color: black;
+  padding: 10px;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+#add-product-form button:hover {
+  background-color: #00bcd4;
 }
