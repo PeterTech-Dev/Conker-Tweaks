@@ -44,6 +44,11 @@ async def get_paypal_access_token():
 
         return response.json()["access_token"]
 
+@order_router.post("/create/paypal")
+async def create_paypal_order(data: dict):
+    # mock response for now
+    return {"id": "TEST_ORDER_ID"}  # eventually hook into PayPal API
+
 @order_router.post("/create/stripe")
 async def create_stripe_checkout(request: Request):
     body = await request.json()

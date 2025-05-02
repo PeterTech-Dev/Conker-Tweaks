@@ -222,21 +222,21 @@ paypal.Buttons({
   createOrder: function(data, actions) {
   const cart = JSON.parse(localStorage.getItem('cart')) || [];
   const token = localStorage.getItem('access_token');
-  return fetch("https://conker-tweaks-production.up.railway.app/order/api/orders", {
+  return fetch("https://conker-tweaks-production.up.railway.app/order/api/create/paypal", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ cart }),
   })
-  .then((res) => res.json())
-  .then((data) => {
-    return data.id;
-  })
-  .catch((err) => {
-    console.error("Order creation failed", err);
-    throw err;
-  });
+  .then((res) => {
+      if (!res.ok) throw new Error("Failed to create order");
+      return res.json();
+    })
+    .then((data) => {
+      if (!data.id) throw new Error("No order ID returned");
+      return data.id;
+    });
 },
 
 
