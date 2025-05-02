@@ -54,10 +54,14 @@ function handleCartButtonClick(event) {
 
 document.addEventListener('DOMContentLoaded', () => {
   cart = JSON.parse(localStorage.getItem('cart')) || [];
-  updateCartDisplay();
 
-  document.getElementById('checkout-products').addEventListener('click', handleCartButtonClick);
+  const cartContainer = document.getElementById('checkout-products');
+  if (cartContainer) {
+    updateCartDisplay();
+    cartContainer.addEventListener('click', handleCartButtonClick);
+  }
 });
+
 
 function directPurchase(id, name, price) {
   fetch(`https://conker-tweaks-production.up.railway.app/product/${id}`)
