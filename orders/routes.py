@@ -12,6 +12,7 @@ from database import SessionLocal, get_db
 from models.users import User
 from models.licenses import LicenseKey
 from models.orders import Order
+from models.products import Product
 import stripe
 import httpx
 from dotenv import load_dotenv
@@ -98,31 +99,43 @@ async def capture_order(order_id: str, db: Session = Depends(get_db)):
         if not transaction_id:
             raise HTTPException(status_code=400, detail="Transaction ID not found")
 
+        # Get order by PayPal order ID
         order = db.query(Order).filter(Order.paypal_order_id == order_id).first()
 
-        assigned_email = None
-        if order:
-            assigned_email = order.email
+        if not order:
+            raise HTTPException(status_code=404, detail="Order not found")
 
-        # 🔥 Generate a license key based on transaction ID
-        license_key_value = f"LICENSE-{transaction_id[-8:]}"
-        new_license = LicenseKey(
-            key=license_key_value,
-            product_id=1,  # Assuming product_id=1 is valid
-            is_used=False,
-            assigned_to_email=assigned_email,
-        )
-        db.add(new_license)
+        # Get product info
+        product = db.query(Product).filter(Product.id == order.product_id).first()
+        if not product:
+            raise HTTPException(status_code=500, detail="Product not found")
+
+        # Assign license key
+        existing_license = db.query(LicenseKey).filter(
+            LicenseKey.product_id == order.product_id,
+            LicenseKey.is_used == False
+        ).first()
+
+        if not existing_license:
+            raise HTTPException(status_code=500, detail="No license keys available")
+
+        existing_license.is_used = True
+        existing_license.assigned_to_email = order.email
         db.commit()
 
         return JSONResponse(
             content={
                 "transaction_id": transaction_id,
                 "status": status,
-                "license_key": license_key_value,
+                "license_key": existing_license.key,
+                "download_link": product.download_link,
                 "order": order_data,
             }
         )
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 
     except HttpError as e:
         return JSONResponse(status_code=e.status_code, content={"error": str(e)})

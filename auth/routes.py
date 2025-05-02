@@ -7,6 +7,7 @@ from passlib.context import CryptContext
 from jose import JWTError, jwt
 from datetime import datetime, timedelta
 from fastapi.security import OAuth2PasswordBearer
+from models.products import Product
 import pyotp
 import qrcode
 from fastapi.responses import StreamingResponse
@@ -20,10 +21,9 @@ ALGORITHM = os.getenv("ALGORITHM")
 
 auth_router = APIRouter()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
-# Password hashing setup
+
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-# Utility functions
 def hash_password(password: str):
     return pwd_context.hash(password)
 
@@ -40,7 +40,6 @@ def create_access_token(data: dict, expires_delta: timedelta = None):
 @auth_router.post("/register", response_model=UserResponse)
 def register_user(user: UserCreate, db: Session = Depends(get_db)):
     try:
-        # Check if email or username already exists
         existing_user = db.query(User).filter(User.email == user.email).first()
         if existing_user:
             raise HTTPException(status_code=400, detail="Email already registered")
@@ -61,8 +60,6 @@ def register_user(user: UserCreate, db: Session = Depends(get_db)):
         print("🔥 Registration Error:", e)
         raise HTTPException(status_code=500, detail="Registration failed")
 
-
-# Login route
 @auth_router.post("/login")
 def login_user(user: UserLogin, db: Session = Depends(get_db)):
     db_user = db.query(User).filter(User.email == user.email).first()
@@ -108,17 +105,33 @@ def protected_route(current_user: User = Depends(get_current_user)):
     return {"message": f"Welcome {current_user.username}!"}
 
 @auth_router.get("/profile")
-def view_profile(current_user: User = Depends(get_current_user)):
+def view_profile(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    license = db.query(LicenseKey).filter(
+        LicenseKey.assigned_to_email == current_user.email,
+        LicenseKey.is_used == True
+    ).first()
+
+    download_link = None
+    license_key = None
+
+    if license:
+        license_key = license.key
+        product = db.query(Product).filter(Product.id == license.product_id).first()
+        if product:
+            download_link = product.download_link
+
     return {
         "id": current_user.id,
         "username": current_user.username,
         "email": current_user.email,
         "created_at": current_user.created_at,
         "current_package": current_user.current_package,
-        "license_key": current_user.license_key,
+        "license_key": license_key,
+        "download_link": download_link,
         "is_admin": current_user.is_admin,
         "has_2fa": current_user.has_2fa,
     }
+
 
 @auth_router.post("/profile/update_password")
 def update_password(
