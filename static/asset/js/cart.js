@@ -80,7 +80,7 @@ function directPurchase(id, name, price) {
       }
 
       // Continue with adding to cart...
-      const cart = JSON.parse(localStorage.getItem('cart')) || [];
+      cart = JSON.parse(localStorage.getItem('cart')) || [];
       const existingItem = cart.find(item => item.id === id);
       if (existingItem) {
         if (product.stock !== -1 && existingItem.quantity >= product.stock) {
@@ -93,7 +93,7 @@ function directPurchase(id, name, price) {
       }
 
       localStorage.setItem('cart', JSON.stringify(cart));
-      window.location.href = "/static/Cart/cart.html";
+      updateCartDisplay();
     });
 }
 
