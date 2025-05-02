@@ -37,7 +37,7 @@ async def get_paypal_access_token():
     return response.json()["access_token"]
 
 @order_router.post("/orders")
-async def create_order(request: Request, db: Session = Depends(get_db)):
+async def create_order(request: Request, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     try:
         body = await request.json()
         print("Received PayPal order creation request:", body)
@@ -53,10 +53,6 @@ async def create_order(request: Request, db: Session = Depends(get_db)):
             raise ValueError("Cart is empty or missing.")
 
         total_amount = sum(float(item["price"]) * int(item["quantity"]) for item in items)
-
-        first_item = items[0]
-        email = body.get("email")
-        product_id = first_item["id"]
 
         order_payload = {
             "intent": "CAPTURE",
@@ -81,24 +77,28 @@ async def create_order(request: Request, db: Session = Depends(get_db)):
             print("PayPal response error:", response.status_code, response.text)
             raise HTTPException(status_code=response.status_code, detail="Failed to create PayPal order")
 
-        data = response.json()
-        paypal_order_id = data["id"]
+        response_data = response.json()
+        paypal_order_id = response_data["id"]
 
-        # ✅ Save the order to the database
+        # Only use first item for order record
+        first_item = items[0]
+
         new_order = Order(
-            paypal_order_id=paypal_order_id,
-            email=email,
-            product_id=product_id,
-            price=total_amount
+            user_id=current_user.id,
+            email=current_user.email,
+            price=float(first_item["price"]),
+            product_id=first_item["id"],
+            paypal_order_id=paypal_order_id
         )
         db.add(new_order)
         db.commit()
 
-        return data
+        return response_data
 
     except Exception as e:
         print("💥 PayPal order creation error:", e)
         raise HTTPException(status_code=500, detail=str(e))
+
 
 
 @order_router.post("/orders/{order_id}/capture")
