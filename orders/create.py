@@ -12,9 +12,6 @@ from paypalcheckoutsdk.orders import OrdersCreateRequest
 from paypalcheckoutsdk.core import PayPalHttpClient, SandboxEnvironment
 
 order_router = APIRouter()
-router = APIRouter(
-    prefix="/order/api",   # same as your other router
-)
 
 load_dotenv()
 
@@ -103,7 +100,7 @@ async def create_stripe_checkout(request: Request):
 
     return JSONResponse(content={"checkout_url": session.url}) 
 
-@router.post("/orders/{order_id}/capture")
+@order_router.post("/orders/{order_id}/capture")
 async def create_paypal_order(cart):
     access_token = await get_paypal_access_token()
 
