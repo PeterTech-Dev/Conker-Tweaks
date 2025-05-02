@@ -24,41 +24,50 @@ window.addEventListener("DOMContentLoaded", () => {
       window.location.href = "/static/Login/Login.html";
     });
 
-  function loadAdminData() {
-    fetch("https://conker-tweaks-production.up.railway.app/owner/dashboard", {
-      headers: { "Authorization": "Bearer " + token }
-    })
-      .then(res => res.json())
-      .then(data => {
-        document.getElementById("stats").innerHTML = `
-          <div class="card"><strong>Users:</strong> ${data.users}</div>
-          <div class="card"><strong>Products:</strong> ${data.products}</div>
-          <div class="card"><strong>Purchases:</strong> ${data.purchases}</div>
-        `;
-      });
-
-    fetch("https://conker-tweaks-production.up.railway.app/owner/list-products", {
-      headers: { "Authorization": "Bearer " + token }
-    })
-      .then(res => res.json())
-      .then(products => {
-        const list = document.getElementById("product-list");
-        list.innerHTML = "";
-        products.forEach(product => {
-          const div = document.createElement("div");
-          div.classList.add("card");
-          div.innerHTML = `
-            <strong>${product.name}</strong><br>
-            Price: R${product.price}<br>
-            Stock: ${product.stock}<br>
-            License: ${product.needs_license ? "Yes" : "No"}<br>
-            <button onclick="addKey(${product.id})">Add License Key</button>
-            <button onclick="deleteProduct(${product.id})">Delete</button>
+    function loadAdminData() {
+      fetch("https://conker-tweaks-production.up.railway.app/owner/dashboard", {
+        headers: { "Authorization": "Bearer " + token }
+      })
+        .then(res => res.json())
+        .then(data => {
+          document.getElementById("stats").innerHTML = `
+            <div class="card"><strong>Users:</strong> ${data.users}</div>
+            <div class="card"><strong>Products:</strong> ${data.products}</div>
+            <div class="card"><strong>Purchases:</strong> ${data.purchases}</div>
           `;
-          list.appendChild(div);
         });
-      });
-  }
+    
+      fetch("https://conker-tweaks-production.up.railway.app/owner/list-products", {
+        headers: { "Authorization": "Bearer " + token }
+      })
+        .then(res => res.json())
+        .then(products => {
+          const list = document.getElementById("product-list");
+          list.innerHTML = "";
+          products.forEach(product => {
+            const descLines = product.description
+              .split('\n')
+              .filter(line => line.trim() !== '');
+            const descHTML = descLines.map(line => `<li>${line}</li>`).join('');
+    
+            const isInfinite = product.stock === -1;
+    
+            const div = document.createElement("div");
+            div.classList.add("pricing-card");
+            div.innerHTML = `
+              <h3>${product.name}</h3>
+              <h2 class="price">R${product.price}</h2>
+              <div class="stock-available">${isInfinite ? "∞ Available" : `${product.stock} Available`}</div>
+              <ul>${descHTML}</ul>
+              <button class="purchase-btn" onclick="addKey(${product.id})">Add License Key</button>
+              <button class="purchase-btn" onclick="deleteProduct(${product.id})">Delete</button>
+              <button class="purchase-btn" onclick="setInfiniteStock(${product.id})">Set Infinite Stock</button>
+            `;
+            list.appendChild(div);
+          });
+        });
+    }
+    
 
   document.getElementById("add-product-form").addEventListener("submit", async function (e) {
     e.preventDefault();
@@ -123,3 +132,25 @@ window.addEventListener("DOMContentLoaded", () => {
       });
   };
 });
+
+window.setInfiniteStock = function(productId) {
+  fetch(`https://conker-tweaks-production.up.railway.app/owner/set-stock/${productId}`, {
+    method: "PATCH",
+    headers: {
+      "Authorization": "Bearer " + token
+    }
+  })
+    .then(res => {
+      if (!res.ok) throw new Error("Failed to update stock");
+      return res.json();
+    })
+    .then(() => {
+      alert("Stock set to infinite");
+      loadAdminData();
+    })
+    .catch(err => {
+      console.error(err);
+      alert("Failed to set stock to infinite");
+    });
+};
+

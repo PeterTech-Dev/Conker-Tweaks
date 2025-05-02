@@ -115,6 +115,18 @@ def add_product(product: ProductCreate, db: Session = Depends(get_db)):
     db.refresh(new_product)
     return {"message": "Product added", "product_id": new_product.id}
 
-@owner_router.get("/ping")
-def ping():
-    return {"status": "admin route works"}
+@owner_router.patch("/set-stock/{product_id}")
+def set_infinite_stock(
+    product_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    is_admin(current_user)
+
+    product = db.query(Product).filter(Product.id == product_id).first()
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+
+    product.stock = -1
+    db.commit()
+    return {"message": "Stock set to infinite"}
