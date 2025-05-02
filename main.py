@@ -4,7 +4,7 @@ from fastapi.security import OAuth2PasswordBearer
 
 from auth.routes import auth_router
 from products.routes import products_router
-from owner.routes import admin_router
+from owner.routes import owner_router
 from orders.routes import order_router
 from orders.webhooks import router as webhook_router
 
@@ -22,7 +22,7 @@ Base.metadata.create_all(bind=engine)
 
 app.include_router(auth_router, prefix="/auth", tags=["Auth"])
 app.include_router(products_router, prefix="/products", tags=["Products"])
-app.include_router(admin_router, prefix="/admin", tags=["Admin"])
+app.include_router(owner_router, prefix="/owner", tags=["Owner"])
 app.include_router(order_router)
 app.include_router(webhook_router, prefix="/webhooks")
 

@@ -25,7 +25,7 @@ window.addEventListener("DOMContentLoaded", () => {
     });
 
   function loadAdminData() {
-    fetch("https://conker-tweaks-production.up.railway.app/admin/dashboard", {
+    fetch("https://conker-tweaks-production.up.railway.app/owner/dashboard", {
       headers: { "Authorization": "Bearer " + token }
     })
       .then(res => res.json())
@@ -37,7 +37,7 @@ window.addEventListener("DOMContentLoaded", () => {
         `;
       });
 
-    fetch("https://conker-tweaks-production.up.railway.app/admin/list-products", {
+    fetch("https://conker-tweaks-production.up.railway.app/owner/list-products", {
       headers: { "Authorization": "Bearer " + token }
     })
       .then(res => res.json())
@@ -72,7 +72,7 @@ window.addEventListener("DOMContentLoaded", () => {
       needs_license: document.getElementById("needs_license").checked
     };
 
-    const res = await fetch("https://conker-tweaks-production.up.railway.app/admin/add_product", {
+    const res = await fetch("https://conker-tweaks-production.up.railway.app/owner/add_product", {
       method: "POST",
       headers: {
         "Authorization": "Bearer " + token,
@@ -95,7 +95,7 @@ window.addEventListener("DOMContentLoaded", () => {
     const key = prompt("Enter license key:");
     if (!key) return;
 
-    fetch("https://conker-tweaks-production.up.railway.app/admin/add_license_key", {
+    fetch("https://conker-tweaks-production.up.railway.app/owner/add_license_key", {
       method: "POST",
       headers: {
         "Authorization": "Bearer " + token,
@@ -112,7 +112,7 @@ window.addEventListener("DOMContentLoaded", () => {
   window.deleteProduct = function (productId) {
     if (!confirm("Are you sure you want to delete this product?")) return;
 
-    fetch(`https://conker-tweaks-production.up.railway.app/admin/delete-product/${productId}`, {
+    fetch(`https://conker-tweaks-production.up.railway.app/owner/delete-product/${productId}`, {
       method: "DELETE",
       headers: { "Authorization": "Bearer " + token }
     })

@@ -10,13 +10,13 @@ from models.products import Product
 from models.purchases import Purchase
 from typing import List
 
-admin_router = APIRouter(prefix="/admin", tags=["Admin"])
+owner_router = APIRouter(prefix="/owner", tags=["Owner"])
 
 def is_admin(user: User):
     if not user.is_admin:
         raise HTTPException(status_code=403, detail="Admins only")
     return True
-@admin_router.get("/dashboard")
+@owner_router.get("/dashboard")
 def admin_dashboard(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     if not current_user.is_admin or not current_user.has_2fa:
         raise HTTPException(status_code=403, detail="Admins only with 2FA")
@@ -31,7 +31,7 @@ def admin_dashboard(db: Session = Depends(get_db), current_user: User = Depends(
         "purchases": total_purchases
     }   
 # Create a new product
-@admin_router.post("/create-product")
+@owner_router.post("/create-product")
 def create_product(name: str, has_keys: bool, download_link: str, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     is_admin(current_user)
 
@@ -41,7 +41,7 @@ def create_product(name: str, has_keys: bool, download_link: str, db: Session = 
     db.refresh(product)
     return {"message": "Product created", "product_id": product.id}
 
-@admin_router.post("/add_license_key")
+@owner_router.post("/add_license_key")
 def add_license_key(license: LicenseKeyCreate, db: Session = Depends(get_db)):
     product = db.query(Product).filter(Product.id == license.product_id).first()
     if not product:
@@ -55,7 +55,7 @@ def add_license_key(license: LicenseKeyCreate, db: Session = Depends(get_db)):
     db.commit()
     return {"message": f"{len(keys)} license keys added"}
 
-@admin_router.delete("/delete-product/{product_id}")
+@owner_router.delete("/delete-product/{product_id}")
 def delete_product(product_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     is_admin(current_user)
     product = db.query(Product).filter(Product.id == product_id).first()
@@ -67,7 +67,7 @@ def delete_product(product_id: int, db: Session = Depends(get_db), current_user:
     return {"message": "Product deleted"}
 
 # List all products
-@admin_router.get("/list-products")
+@owner_router.get("/list-products")
 def list_products(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     is_admin(current_user)
 
@@ -75,29 +75,29 @@ def list_products(db: Session = Depends(get_db), current_user: User = Depends(ge
     return products
 
 # List keys for a product
-@admin_router.get("/list-keys/{product_id}")
+@owner_router.get("/list-keys/{product_id}")
 def list_keys(product_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     is_admin(current_user)
 
     keys = db.query(LicenseKey).filter(LicenseKey.product_id == product_id).all()
     return keys
 
-@admin_router.get("/admin/users")
+@owner_router.get("/admin/users")
 def get_all_users(db: Session = Depends(get_db)):
     users = db.query(User).all()
     return users
 
-@admin_router.get("/admin/products")
+@owner_router.get("/admin/products")
 def get_all_products(db: Session = Depends(get_db)):
     products = db.query(Product).all()
     return products
 
-@admin_router.get("/admin/purchases")
+@owner_router.get("/admin/purchases")
 def get_all_purchases(db: Session = Depends(get_db)):
     purchases = db.query(Purchase).all()
     return purchases
 
-@admin_router.post("/add_product")
+@owner_router.post("/add_product")
 def add_product(product: ProductCreate, db: Session = Depends(get_db)):
     existing = db.query(Product).filter(Product.name == product.name).first()
     if existing:
@@ -116,6 +116,6 @@ def add_product(product: ProductCreate, db: Session = Depends(get_db)):
     db.refresh(new_product)
     return {"message": "Product added", "product_id": new_product.id}
 
-@admin_router.get("/ping")
+@owner_router.get("/ping")
 def ping():
     return {"status": "admin route works"}
