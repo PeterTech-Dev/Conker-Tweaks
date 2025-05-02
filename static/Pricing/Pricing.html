@@ -204,9 +204,39 @@ Support/Support.html"
       </div>
     </div>
   </footer>
-  <script src="/static/asset/js/cart.js"
-></script>
+  <script src="/static/asset/js/cart.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      fetch("https://conker-tweaks-production.up.railway.app/products")
+        .then(res => res.json())
+        .then(products => {
+          const container = document.getElementById("product-list");
+          container.innerHTML = "";
     
+          products.forEach(product => {
+            const isInfinite = product.stock === -1;
+            const stockText = isInfinite ? "∞ Available" : `${product.stock} Available`;
+    
+            const descriptionList = product.description
+              .split('\n')
+              .filter(line => line.trim() !== '')
+              .map(line => `<li>${line}</li>`)
+              .join('');
+    
+            const card = document.createElement("div");
+            card.classList.add("pricing-card");
+            card.innerHTML = `
+              <h3>${product.name}</h3>
+              <h2 class="price">$${Number(product.price).toFixed(2)}</h2>
+              <div class="stock-available">${stockText}</div>
+              <ul>${descriptionList}</ul>
+              <button class="purchase-btn" onclick="directPurchase(${product.id}, '${product.name}', ${product.price})">Purchase Now</button>
+            `;
+            container.appendChild(card);
+          });
+        });
+    });
+    </script>    
 </body>
 </html>
 <!-- Website developed by Your Name - https://github.com/PeterTech-Dev -->
