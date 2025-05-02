@@ -207,7 +207,7 @@ Support/Support.html"
   <script src="/static/asset/js/cart.js"></script>
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-      fetch("https://conker-tweaks-production.up.railway.app/products")
+      fetch("https://conker-tweaks-production.up.railway.app/products/products")
         .then(res => res.json())
         .then(products => {
           const container = document.getElementById("product-list");
