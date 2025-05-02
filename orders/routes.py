@@ -1,6 +1,5 @@
 from fastapi import FastAPI, APIRouter, Request, Depends, HTTPException
 from fastapi.responses import JSONResponse
-from create import create_order
 import requests
 import os
 from paypalcheckoutsdk.orders import OrdersCreateRequest, OrdersCaptureRequest
