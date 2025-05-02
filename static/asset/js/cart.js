@@ -93,7 +93,7 @@ function directPurchase(id, name, price) {
       }
 
       localStorage.setItem('cart', JSON.stringify(cart));
-      updateCartDisplay();
+      window.location.href = "/static/Cart/cart.html";
     });
 }
 
