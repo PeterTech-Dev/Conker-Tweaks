@@ -24,7 +24,7 @@ Base.metadata.create_all(bind=engine)
 app.include_router(auth_router, prefix="/auth", tags=["Auth"])
 app.include_router(products_router)
 app.include_router(owner_router, prefix="/owner", tags=["Owner"])
-app.include_router(order_router)
+app.include_router(order_router, prefix="/order/api", tags=["Orders"])
 app.include_router(webhook_router, prefix="/webhooks")
 
 app.mount("/static", StaticFiles(directory="static"), name="static")

@@ -53,8 +53,6 @@ async def create_order(request: Request):
     body = await request.json()
     cart = body.get("cart", [])
 
-    # 🧠 You could calculate totals or verify cart here
-    # For now we’ll just make a basic PayPal order:
     total = sum(item["price"] * item["quantity"] for item in cart)
     total = round(total, 2)
 
@@ -94,7 +92,7 @@ async def create_stripe_checkout(request: Request):
                 'product_data': {
                     'name': 'Conker Tweaks Purchase',
                 },
-                'unit_amount': int(float(amount) * 100),  # Stripe needs cents
+                'unit_amount': int(float(amount) * 100),
             },
             'quantity': 1,
         }],
