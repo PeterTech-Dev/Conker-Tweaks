@@ -226,7 +226,39 @@ paypal.Buttons({
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify({ cart })
+        body: OrderRequest(
+          order_payload = {
+          "intent": "CAPTURE",
+          "purchase_units": [
+        {
+            "amount": {
+                "currency_code": "USD",
+                "value": "100.00",
+                "breakdown": {
+                    "item_total": {
+                        "currency_code": "USD",
+                        "value": "100.00"
+                    }
+                }
+            },
+            "items": [
+                {
+                    "name": "T-Shirt",
+                    "unit_amount": {
+                        "currency_code": "USD",
+                        "value": "100.00"
+                    },
+                    "quantity": "1",
+                    "description": "Super Fresh Shirt",
+                    "sku": "sku01",
+                    "category": "PHYSICAL_GOODS"
+                }
+            ]
+        }
+    ]
+}
+        )
+
     });
 
     const orderData = await response.json();
