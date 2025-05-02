@@ -54,6 +54,12 @@ async def create_order(request: Request, db: Session = Depends(get_db), current_
 
         total_amount = sum(float(item["price"]) * int(item["quantity"]) for item in items)
 
+        user_id = current_user.id
+        email = current_user.email
+        first_item = items[0]
+        email = body.get("email")
+        product_id = first_item["id"]
+
         order_payload = {
             "intent": "CAPTURE",
             "purchase_units": [
@@ -77,11 +83,8 @@ async def create_order(request: Request, db: Session = Depends(get_db), current_
             print("PayPal response error:", response.status_code, response.text)
             raise HTTPException(status_code=response.status_code, detail="Failed to create PayPal order")
 
-        response_data = response.json()
-        paypal_order_id = response_data["id"]
-
-        # Only use first item for order record
-        first_item = items[0]
+        data = response.json()
+        paypal_order_id = data["id"]
 
         new_order = Order(
             user_id=current_user.id,
@@ -93,12 +96,11 @@ async def create_order(request: Request, db: Session = Depends(get_db), current_
         db.add(new_order)
         db.commit()
 
-        return response_data
+        return data
 
     except Exception as e:
         print("💥 PayPal order creation error:", e)
         raise HTTPException(status_code=500, detail=str(e))
-
 
 
 @order_router.post("/orders/{order_id}/capture")
