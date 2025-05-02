@@ -44,37 +44,6 @@ async def get_paypal_access_token():
             raise HTTPException(status_code=500, detail="Failed to fetch PayPal access token")
 
         return response.json()["access_token"]
-    
-@order_router.post("/orders")
-async def create_order(request: Request):
-    body = await request.json()
-    cart = body.get("cart", [])
-
-    total = sum(item["price"] * item["quantity"] for item in cart)
-    total = round(total, 2)
-
-    create_request = OrdersCreateRequest()
-    create_request.prefer("return=representation")
-    create_request.request_body(
-        {
-            "intent": "CAPTURE",
-            "purchase_units": [
-                {
-                    "amount": {
-                        "currency_code": "USD",
-                        "value": f"{total:.2f}",
-                    }
-                }
-            ]
-        }
-    )
-
-    try:
-        response = paypal_client.execute(create_request)
-        order = response.result
-        return {"id": order.id}
-    except Exception as e:
-        return JSONResponse(status_code=500, content={"error": str(e)})
 
 @order_router.post("/create/stripe")
 async def create_stripe_checkout(request: Request):
