@@ -14,6 +14,13 @@ def list_products(db: Session = Depends(get_db)):
     products = db.query(Product).all()
     return products
 
+@products_router.get("/product/{product_id}")
+def get_product(product_id: int, db: Session = Depends(get_db)):
+    product = db.query(Product).filter(Product.id == product_id).first()
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+    return product
+
 @products_router.post("/purchase")
 def purchase_product(product_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     product = db.query(Product).filter(Product.id == product_id).first()
