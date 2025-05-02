@@ -37,7 +37,7 @@ async def get_paypal_access_token():
     return response.json()["access_token"]
 
 @order_router.post("/orders")
-async def create_order(request: Request):
+async def create_order(request: Request, db: Session = Depends(get_db)):
     try:
         body = await request.json()
         print("Received PayPal order creation request:", body)
@@ -53,6 +53,10 @@ async def create_order(request: Request):
             raise ValueError("Cart is empty or missing.")
 
         total_amount = sum(float(item["price"]) * int(item["quantity"]) for item in items)
+
+        first_item = items[0]
+        email = body.get("email")
+        product_id = first_item["id"]
 
         order_payload = {
             "intent": "CAPTURE",
@@ -77,7 +81,20 @@ async def create_order(request: Request):
             print("PayPal response error:", response.status_code, response.text)
             raise HTTPException(status_code=response.status_code, detail="Failed to create PayPal order")
 
-        return response.json()
+        data = response.json()
+        paypal_order_id = data["id"]
+
+        # ✅ Save the order to the database
+        new_order = Order(
+            paypal_order_id=paypal_order_id,
+            email=email,
+            product_id=product_id,
+            price=total_amount
+        )
+        db.add(new_order)
+        db.commit()
+
+        return data
 
     except Exception as e:
         print("💥 PayPal order creation error:", e)
@@ -102,7 +119,7 @@ async def capture_order(order_id: str, db: Session = Depends(get_db)):
         print(f"Looking for order with PayPal ID: {order_id}")
         order = db.query(Order).filter(Order.paypal_order_id == order_id).first()
         print(f"Found order: {order}")
-        
+
         if not order:
             raise HTTPException(status_code=404, detail="Order not found")
 
