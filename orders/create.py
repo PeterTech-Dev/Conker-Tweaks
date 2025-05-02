@@ -13,7 +13,6 @@ order_router = APIRouter()
 router = APIRouter(
     prefix="/order/api",   # same as your other router
 )
-app = FastAPI()
 
 load_dotenv()
 
@@ -43,50 +42,6 @@ async def get_paypal_access_token():
             raise HTTPException(status_code=500, detail="Failed to fetch PayPal access token")
 
         return response.json()["access_token"]
-
-@app.post("/order/api/orders")
-async def create_order(request: Request):
-    try:
-        access_token = await get_paypal_access_token()
-        body = await request.json()
-        cart = body.get("cart", [])
-
-        total_amount = sum(item['price'] * item['quantity'] for item in cart)
-        total_amount = format(total_amount, '.2f')
-
-        headers = {
-            "Authorization": f"Bearer {access_token}",
-            "Content-Type": "application/json",
-            "Prefer": "return=representation"
-        }
-        order_data = {
-            "intent": "CAPTURE",
-            "purchase_units": [
-                {
-                    "amount": {
-                        "currency_code": "USD",
-                        "value": total_amount
-                    }
-                }
-            ]
-        }
-
-        async with httpx.AsyncClient() as client:
-            response = await client.post(
-                "https://api-m.sandbox.paypal.com/v2/checkout/orders",
-                headers=headers,
-                json=order_data
-            )
-            if response.status_code >= 400:
-                raise HTTPException(status_code=500, detail="Failed to create PayPal order")
-            
-            paypal_order = response.json()
-            # ✨ ONLY return the PayPal order ID
-            return {"id": paypal_order["id"]}
-
-    except Exception as e:
-        print(e)
-        return JSONResponse(status_code=500, content={"error": str(e)})
 
 @order_router.post("/create/stripe")
 async def create_stripe_checkout(request: Request):

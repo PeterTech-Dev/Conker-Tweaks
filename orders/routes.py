@@ -1,6 +1,6 @@
-from fastapi import APIRouter, Request, Depends, HTTPException
+from fastapi import FastAPI, APIRouter, Request, Depends, HTTPException
 from fastapi.responses import JSONResponse
-from .create import create_order
+from create import create_order
 import requests
 import os
 from paypalcheckoutsdk.orders import OrdersCreateRequest, OrdersCaptureRequest
@@ -14,6 +14,7 @@ from models.users import User
 from models.licenses import LicenseKey
 from models.orders import Order
 import stripe
+import httpx
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -36,52 +37,47 @@ def get_paypal_access_token():
 
 @order_router.post("/orders")
 async def create_order(request: Request):
-    body = await request.json()
-    cart = body.get("cart", [])
-
-    total = 0
-    for item in cart:
-        total += item['price'] * item['quantity']
-
-    total = round(total, 2)
-
-    request_order = OrdersCreateRequest()
-    request_order.prefer("return=representation")
-    request_order.request_body(
-        {
-        "intent": "CAPTURE",
-        "purchase_units": [
-            {
-                "amount": {
-                    "currency_code": "USD",
-                    "value": str(total),
-                    "breakdown": {
-                        "item_total": {
-                            "currency_code": "USD",
-                            "value": str(total)
-                        }
-                    }
-                },
-                "items": [
-                    {
-                        "name": item['name'],
-                        "unit_amount": {
-                            "currency_code": "USD",
-                            "value": str(item['price'])
-                        },
-                        "quantity": str(item['quantity']),
-                    } for item in cart
-                ]
-            }
-        ]
-    }
-    )
-
     try:
-        response = paypal_client.execute(request_order)
-        return JSONResponse(content=response.result.__dict__["_dict"])
-    except HttpError as e:
-        return JSONResponse(status_code=e.status_code, content={"error": str(e)})
+        access_token = await get_paypal_access_token()
+        body = await request.json()
+        cart = body.get("cart", [])
+
+        total_amount = sum(item['price'] * item['quantity'] for item in cart)
+        total_amount = format(total_amount, '.2f')
+
+        headers = {
+            "Authorization": f"Bearer {access_token}",
+            "Content-Type": "application/json",
+            "Prefer": "return=representation"
+        }
+        order_data = {
+            "intent": "CAPTURE",
+            "purchase_units": [
+                {
+                    "amount": {
+                        "currency_code": "USD",
+                        "value": total_amount
+                    }
+                }
+            ]
+        }
+
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                "https://api-m.sandbox.paypal.com/v2/checkout/orders",
+                headers=headers,
+                json=order_data
+            )
+            if response.status_code >= 400:
+                raise HTTPException(status_code=500, detail="Failed to create PayPal order")
+            
+            paypal_order = response.json()
+            # ✨ ONLY return the PayPal order ID
+            return {"id": paypal_order["id"]}
+
+    except Exception as e:
+        print(e)
+        return JSONResponse(status_code=500, content={"error": str(e)})
 
 @order_router.post("/orders/{order_id}/capture")
 async def capture_order(order_id: str, db: Session = Depends(get_db)):
