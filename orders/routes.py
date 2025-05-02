@@ -99,9 +99,10 @@ async def capture_order(order_id: str, db: Session = Depends(get_db)):
         if not transaction_id:
             raise HTTPException(status_code=400, detail="Transaction ID not found")
 
-        # Get order by PayPal order ID
+        print(f"Looking for order with PayPal ID: {order_id}")
         order = db.query(Order).filter(Order.paypal_order_id == order_id).first()
-
+        print(f"Found order: {order}")
+        
         if not order:
             raise HTTPException(status_code=404, detail="Order not found")
 
