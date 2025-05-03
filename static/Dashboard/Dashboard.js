@@ -49,7 +49,9 @@ window.addEventListener("DOMContentLoaded", () => {
               .split('\n')
               .filter(line => line.trim() !== '');
             const descHTML = descLines.map(line => `<li>${line}</li>`).join('');
-    
+            const safeName = product.name.replace(/'/g, "\\'");
+            const safeDesc = product.description.replace(/`/g, "\\`").replace(/'/g, "\\'");
+            const safeLink = product.download_link.replace(/'/g, "\\'");
             const isInfinite = product.stock === -1;
     
             const div = document.createElement("div");
@@ -62,8 +64,16 @@ window.addEventListener("DOMContentLoaded", () => {
               <button class="purchase-btn" onclick="addKey(${product.id})">Add License Key</button>
               <button class="purchase-btn" onclick="deleteProduct(${product.id})">Delete</button>
               <button class="purchase-btn" onclick="setInfiniteStock(${product.id})">Set Infinite Stock</button>
-              <button class="purchase-btn" onclick="editProduct(${product.id}, '${product.name}', \`${product.description}\`, ${product.price}, ${product.stock}, '${product.download_link}', ${product.needs_license})">Edit</button>
-            `;
+              <button class="purchase-btn" onclick="editProduct(
+                  ${product.id},
+                  '${safeName}',
+                  \`${safeDesc}\`,
+                  ${product.price},
+                  ${product.stock},
+                  '${safeLink}',
+                  ${product.needs_license}
+                )">Edit</button>
+              `;
             list.appendChild(div);
           });
         });
@@ -173,9 +183,11 @@ window.editProduct = function (id, name, description, price, stock, link, needsL
   const newLink = prompt("Edit download link:", link);
   if (!newLink) return;
 
-  const newNeedsLicense = confirm("Does this require a license key?");
+  let newNeedsLicense = prompt("Does this product need a license key? (yes/no)", needsLicense ? "yes" : "no");
+  if (!newNeedsLicense) return;
+  newNeedsLicense = newNeedsLicense.trim().toLowerCase() === "yes";
 
-  fetch(`https://conker-tweaks-production.up.railway.app/owner/update-product/${productId}`, {
+  fetch(`https://conker-tweaks-production.up.railway.app/owner/update-product/${id}`, {
     method: "PATCH",
     headers: {
       "Authorization": "Bearer " + token,
@@ -203,5 +215,6 @@ window.editProduct = function (id, name, description, price, stock, link, needsL
       alert("Error updating product");
     });
 };
+
 
 
