@@ -158,19 +158,22 @@ Support/Support.html"
   <script>
     const transactionId = new URLSearchParams(window.location.search).get("transaction_id");
     if (transactionId) {
-      fetch(`/order/order-details/${transactionId}`)
+      fetch(`/order/api/order-details/${transactionId}`)
         .then(res => res.json())
         .then(data => {
           document.getElementById("transaction-id").textContent = data.transaction_id;
-          const div = document.createElement("div");
-          div.innerHTML = `
-            <strong>License Key:</strong> ${data.license}<br>
-            <strong>Download:</strong> <a href="${data.download}" target="_blank">${data.download}</a>
-          `;
-          document.getElementById("license-info").appendChild(div);
+          const container = document.getElementById("license-info");
+          data.licenses.forEach(entry => {
+            const div = document.createElement("div");
+            div.innerHTML = `
+              <strong>License Key:</strong> ${entry.license}<br>
+              <strong>Download:</strong> <a href="${entry.download}" target="_blank">${entry.download}</a><hr>
+            `;
+            container.appendChild(div);
+          });
         });
     }
-</script>
+  </script>  
     
 </body>
 </html>

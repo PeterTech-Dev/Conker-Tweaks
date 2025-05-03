@@ -179,18 +179,23 @@ def get_order_details(transaction_id: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Order not found")
 
     product = db.query(Product).filter(Product.id == order.product_id).first()
-
-    license = db.query(LicenseKey).filter(
+    licenses = db.query(LicenseKey).filter(
         LicenseKey.product_id == order.product_id,
         LicenseKey.assigned_to_email == order.email,
         LicenseKey.is_used == True
-    ).first()
+    ).all()
 
     return {
         "transaction_id": transaction_id,
-        "license": license.key if license else None,
-        "download": product.download_link if product else None
+        "licenses": [
+            {
+                "license": lic.key,
+                "download": product.download_link if product else None
+            }
+            for lic in licenses
+        ]
     }
+
     
 @order_router.post("/create-stripe-checkout")
 async def create_stripe_checkout(cart: list):
