@@ -24,6 +24,7 @@ PAYPAL_CLIENT_SECRET = os.getenv("PAYPAL_CLIENT_SECRET")
 stripe.api_key = os.getenv("STRIPE_API_KEY")
 PAYPAL_OAUTH_API = "https://api-m.sandbox.paypal.com/v1/oauth2/token"
 PAYPAL_ORDERS_API = "https://api-m.sandbox.paypal.com/v2/checkout/orders"
+print("🔑 Stripe key loaded:", stripe.api_key)
 
 environment = SandboxEnvironment(client_id=PAYPAL_CLIENT_ID, client_secret=PAYPAL_CLIENT_SECRET)
 paypal_client = PayPalHttpClient(environment)
