@@ -215,7 +215,12 @@ Support/Support.html"
     
           products.forEach(product => {
             const isInfinite = product.stock === -1;
-            const stockText = isInfinite ? "∞ Available" : `${product.stock} Available`;
+            const infinitySVG = `
+              <svg class="infinity-icon" xmlns="http://www.w3.org/2000/svg" height="16" viewBox="0 0 24 24" width="16">
+                <path d="m18 6c-2.69 0-4.756 1.855-6 3.37-1.244-1.515-3.31-3.37-6-3.37a6 6 0 0 0 0 12c2.69 0 4.756-1.855 6-3.37 1.244 1.515 3.31 3.37 6 3.37a6 6 0 0 0 0-12zm-12 9a3 3 0 0 1 0-6c1.791 0 3.4 1.783 4.239 3-.839 1.217-2.448 3-4.239 3zm12 0c-1.791 0-3.4-1.783-4.239-3 .839-1.217 2.448-3 4.239-3a3 3 0 0 1 0 6z" fill="#00e0ff"/>
+              </svg> Available`;
+            const stockText = isInfinite ? infinitySVG : `${product.stock} Available`;
+
     
             const descriptionList = product.description
               .split('\n')
