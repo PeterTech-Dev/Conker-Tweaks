@@ -117,12 +117,13 @@ document.getElementById('loginForm').addEventListener('submit', async function (
       body: JSON.stringify({ email, password })
     });
 
+    const rawText = await loginRes.text();
+
     let data;
     try {
-      data = await loginRes.json();
+      data = JSON.parse(rawText);
     } catch {
-      const text = await loginRes.text();
-      console.error("Raw response:", text);
+      console.error("Raw response (not JSON):", rawText);
       alert("Something went wrong on the server.");
       return;
     }
