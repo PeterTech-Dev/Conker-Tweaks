@@ -160,26 +160,32 @@ Support/Support.html"
       const params = new URLSearchParams(window.location.search);
       const transactionId = params.get("transaction_id");
       const licensesRaw = params.get("licenses");
-    
-      document.getElementById("transaction-id").textContent = transactionId;
-    
-      let licenses;
-      try {
-        licenses = JSON.parse(decodeURIComponent(licensesRaw));
-      } catch (e) {
-        licenses = [];
+
+      document.getElementById("transaction-id").textContent = transactionId ?? "N/A";
+
+      let licenses = [];
+
+      if (licensesRaw) {
+        try {
+          licenses = JSON.parse(decodeURIComponent(licensesRaw));
+        } catch (e) {
+          console.error("Failed to parse licenses:", e);
+        }
       }
-    
+
       const licenseContainer = document.getElementById("license-info");
-      licenses.forEach(item => {
-        const div = document.createElement("div");
-        div.innerHTML = `
-          <strong>License Key:</strong> ${item.license}<br>
-          <strong>Download:</strong> <a href="${item.download}" target="_blank">${item.download}</a>
-        `;
-        licenseContainer.appendChild(div);
-      });
+      if (Array.isArray(licenses)) {
+        licenses.forEach(item => {
+          const div = document.createElement("div");
+          div.innerHTML = `
+            <strong>License Key:</strong> ${item.license}<br>
+            <strong>Download:</strong> <a href="${item.download}" target="_blank">${item.download}</a>
+          `;
+          licenseContainer.appendChild(div);
+        });
+      }
     });
+
     </script>
     
 </body>
