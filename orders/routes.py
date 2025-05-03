@@ -137,31 +137,27 @@ async def capture_order(order_id: str, db: Session = Depends(get_db)):
         
         all_licenses = []
 
-        for item in order.cart:
-            product_id = item.get("id")
-            quantity = item.get("quantity", 1)
+        licenses = []
 
-            product = db.query(Product).filter(Product.id == product_id).first()
-            if not product:
-                continue  # skip invalid products
-
+        for item in order.items:
             available_keys = db.query(LicenseKey).filter(
-                LicenseKey.product_id == product_id,
+                LicenseKey.product_id == item.product_id,
                 LicenseKey.is_used == False
-            ).limit(quantity).all()
+            ).limit(item.quantity).all()
 
-            if len(available_keys) < quantity:
-                raise HTTPException(status_code=500, detail=f"Not enough license keys for product {product.name}")
+            if len(available_keys) < item.quantity:
+                raise HTTPException(status_code=500, detail="Not enough license keys for product")
 
             for key in available_keys:
                 key.is_used = True
                 key.assigned_to_email = order.email
-                all_licenses.append({
+                licenses.append({
                     "license": key.key,
-                    "download": product.download_link
+                    "download": item.product.download_link  # assumes a Product relationship
                 })
 
         db.commit()
+
 
         return JSONResponse(
             content={
