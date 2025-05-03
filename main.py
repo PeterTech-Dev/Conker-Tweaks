@@ -13,6 +13,7 @@ from database import Base, engine
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from fastapi.responses import HTMLResponse
+import models
 
 import os
 
