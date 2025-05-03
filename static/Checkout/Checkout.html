@@ -260,14 +260,16 @@ paypal.Buttons({
     if (orderData.transaction_id) {
       localStorage.removeItem('cart');
       let url = `/static/Checkout/thankyou.html?transaction_id=${orderData.transaction_id}`;
-      if (orderData.license_key) {
-        url += `&license_key=${orderData.license_key}`;
+
+      if (orderData.licenses) {
+        const licensesParam = encodeURIComponent(JSON.stringify(orderData.licenses));
+        url += `&licenses=${licensesParam}`;
       }
+
       window.location.href = url;
-    } else {
-      alert('Payment successful but transaction ID not found.');
     }
   },
+
 
   onError: function (err) {
     console.error(err);

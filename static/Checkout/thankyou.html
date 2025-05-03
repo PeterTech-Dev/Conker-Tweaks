@@ -164,12 +164,16 @@ Support/Support.html"
   <script>
     const params = new URLSearchParams(window.location.search);
     const transactionId = params.get('transaction_id');
-    const licenseKey = params.get('license_key');
+    const licensesRaw = params.get('licenses');
+      if (licensesRaw) {
+        const licenses = JSON.parse(decodeURIComponent(licensesRaw));
+        const licenseList = licenses.map(
+          l => `Key: ${l.license_key} (Product ID: ${l.product_id})<br>Download: <a href="${l.download_link}" target="_blank">${l.download_link}</a>`
+        ).join('<br><br>');
+        document.getElementById('license-id').innerHTML = licenseList;
+      }
     if (transactionId) {
       document.getElementById('transaction-id').innerText = `Transaction ID: ${transactionId}`;
-    }
-    if (transactionId) {
-      document.getElementById('license-id').innerText = `License Key: ${licenseKey}`;
     }
     </script>
 </body>
