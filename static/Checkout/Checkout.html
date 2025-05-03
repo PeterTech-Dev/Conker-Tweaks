@@ -187,7 +187,7 @@ function loadCart() {
 }
 
 window.addEventListener("DOMContentLoaded", function() {
-  loadCart(); // ← load cart when page loads
+  loadCart();
 });
 </script> 
 <script>
@@ -197,7 +197,7 @@ function getCartTotal() {
   cart.forEach(item => {
     total += item.price * item.quantity;
   });
-  return total.toFixed(2); // 2 decimals
+  return total.toFixed(2);
 }
 
 async function payWithStripe() {

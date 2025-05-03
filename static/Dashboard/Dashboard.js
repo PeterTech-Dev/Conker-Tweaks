@@ -1,5 +1,58 @@
 const token = localStorage.getItem("access_token");
 
+function loadAdminData() {
+  fetch("https://conker-tweaks-production.up.railway.app/owner/dashboard", {
+    headers: { "Authorization": "Bearer " + token }
+  })
+    .then(res => res.json())
+    .then(data => {
+      document.getElementById("stats").innerHTML = `
+        <div class="card"><strong>Users:</strong> ${data.users}</div>
+        <div class="card"><strong>Products:</strong> ${data.products}</div>
+        <div class="card"><strong>Purchases:</strong> ${data.purchases}</div>
+      `;
+    });
+
+  fetch("https://conker-tweaks-production.up.railway.app/owner/list-products", {
+    headers: { "Authorization": "Bearer " + token }
+  })
+    .then(res => res.json())
+    .then(products => {
+      const list = document.getElementById("product-list");
+      list.innerHTML = "";
+      products.forEach(product => {
+        const descLines = product.description.split('\n').filter(line => line.trim() !== '');
+        const descHTML = descLines.map(line => `<li>${line}</li>`).join('');
+        const safeName = product.name.replace(/'/g, "\\'");
+        const safeDesc = product.description.replace(/`/g, "\\`").replace(/'/g, "\\'");
+        const safeLink = product.download_link.replace(/'/g, "\\'");
+        const isInfinite = product.stock === -1;
+
+        const div = document.createElement("div");
+        div.classList.add("pricing-card");
+        div.innerHTML = `
+          <h3>${product.name}</h3>
+          <h2 class="price">$${Number(product.price).toFixed(2)}</h2>
+          <div class="stock-available">${isInfinite ? "∞ Available" : `${product.stock} Available`}</div>
+          <ul>${descHTML}</ul>
+          <button class="purchase-btn" onclick="addKey(${product.id})">Add License Key</button>
+          <button class="purchase-btn" onclick="deleteProduct(${product.id})">Delete</button>
+          <button class="purchase-btn" onclick="setInfiniteStock(${product.id})">Set Infinite Stock</button>
+          <button class="purchase-btn" onclick="editProduct(
+              ${product.id},
+              '${safeName}',
+              \`${safeDesc}\`,
+              ${product.price},
+              ${product.stock},
+              '${safeLink}',
+              ${product.needs_license}
+            )">Edit</button>
+        `;
+        list.appendChild(div);
+      });
+    });
+}
+
 window.addEventListener("DOMContentLoaded", () => {
   if (!token) {
     window.location.href = "/static/Login/Login.html";
@@ -17,67 +70,14 @@ window.addEventListener("DOMContentLoaded", () => {
         window.location.href = "/static/Landing/Landing.html";
       } else {
         document.getElementById("admin-main").style.display = "block";
-        loadAdminData();
+        loadAdminData();  // ✅ now defined and accessible
       }
     })
     .catch(() => {
       window.location.href = "/static/Login/Login.html";
     });
+});
 
-    function loadAdminData() {
-      fetch("https://conker-tweaks-production.up.railway.app/owner/dashboard", {
-        headers: { "Authorization": "Bearer " + token }
-      })
-        .then(res => res.json())
-        .then(data => {
-          document.getElementById("stats").innerHTML = `
-            <div class="card"><strong>Users:</strong> ${data.users}</div>
-            <div class="card"><strong>Products:</strong> ${data.products}</div>
-            <div class="card"><strong>Purchases:</strong> ${data.purchases}</div>
-          `;
-        });
-    
-      fetch("https://conker-tweaks-production.up.railway.app/owner/list-products", {
-        headers: { "Authorization": "Bearer " + token }
-      })
-        .then(res => res.json())
-        .then(products => {
-          const list = document.getElementById("product-list");
-          list.innerHTML = "";
-          products.forEach(product => {
-            const descLines = product.description
-              .split('\n')
-              .filter(line => line.trim() !== '');
-            const descHTML = descLines.map(line => `<li>${line}</li>`).join('');
-            const safeName = product.name.replace(/'/g, "\\'");
-            const safeDesc = product.description.replace(/`/g, "\\`").replace(/'/g, "\\'");
-            const safeLink = product.download_link.replace(/'/g, "\\'");
-            const isInfinite = product.stock === -1;
-    
-            const div = document.createElement("div");
-            div.classList.add("pricing-card");
-            div.innerHTML = `
-              <h3>${product.name}</h3>
-              <h2 class="price">$${Number(product.price).toFixed(2)}</h2>
-              <div class="stock-available">${isInfinite ? "∞ Available" : `${product.stock} Available`}</div>
-              <ul>${descHTML}</ul>
-              <button class="purchase-btn" onclick="addKey(${product.id})">Add License Key</button>
-              <button class="purchase-btn" onclick="deleteProduct(${product.id})">Delete</button>
-              <button class="purchase-btn" onclick="setInfiniteStock(${product.id})">Set Infinite Stock</button>
-              <button class="purchase-btn" onclick="editProduct(
-                  ${product.id},
-                  '${safeName}',
-                  \`${safeDesc}\`,
-                  ${product.price},
-                  ${product.stock},
-                  '${safeLink}',
-                  ${product.needs_license}
-                )">Edit</button>
-              `;
-            list.appendChild(div);
-          });
-        });
-    }
     
 
   document.getElementById("add-product-form").addEventListener("submit", async function (e) {
@@ -144,7 +144,6 @@ window.addEventListener("DOMContentLoaded", () => {
         loadAdminData();
       });
   };
-});
 
 window.setInfiniteStock = function(productId) {
   fetch(`https://conker-tweaks-production.up.railway.app/owner/set-stock/${productId}`, {

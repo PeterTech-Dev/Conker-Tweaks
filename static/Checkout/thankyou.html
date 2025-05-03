@@ -120,15 +120,9 @@ Login/Login.html"
 
     <h1>Thank You for Your Purchase!</h1>
     <p>Your payment was successful.</p>
-    <div class="transaction-id" id="transaction-id">
-      Transaction ID: ...
-    </div>
-    <div class="transaction-id" id="license-id">
-      License Key: ...
-    </div>
-    <div class="transaction-id" id="download-id">
-      Download: ...
-    </div>
+    <p>Transaction ID: <span id="transaction-id"></span></p>
+    <div id="license-info"></div>
+    
 
   </div>
   <footer class="site-footer">
@@ -162,20 +156,32 @@ Support/Support.html"
     </div>
   </footer>
   <script>
-    const params = new URLSearchParams(window.location.search);
-    const transactionId = params.get('transaction_id');
-    const licensesRaw = params.get('licenses');
-      if (licensesRaw) {
-        const licenses = JSON.parse(decodeURIComponent(licensesRaw));
-        const licenseList = licenses.map(
-          l => `Key: ${l.license_key} (Product ID: ${l.product_id})<br>Download: <a href="${l.download_link}" target="_blank">${l.download_link}</a>`
-        ).join('<br><br>');
-        document.getElementById('license-id').innerHTML = licenseList;
+    document.addEventListener("DOMContentLoaded", () => {
+      const params = new URLSearchParams(window.location.search);
+      const transactionId = params.get("transaction_id");
+      const licensesRaw = params.get("licenses");
+    
+      document.getElementById("transaction-id").textContent = transactionId;
+    
+      let licenses;
+      try {
+        licenses = JSON.parse(decodeURIComponent(licensesRaw));
+      } catch (e) {
+        licenses = [];
       }
-    if (transactionId) {
-      document.getElementById('transaction-id').innerText = `Transaction ID: ${transactionId}`;
-    }
+    
+      const licenseContainer = document.getElementById("license-info");
+      licenses.forEach(item => {
+        const div = document.createElement("div");
+        div.innerHTML = `
+          <strong>License Key:</strong> ${item.license}<br>
+          <strong>Download:</strong> <a href="${item.download}" target="_blank">${item.download}</a>
+        `;
+        licenseContainer.appendChild(div);
+      });
+    });
     </script>
+    
 </body>
 </html>
 <!-- Website developed by Your Name - https://github.com/PeterTech-Dev -->
