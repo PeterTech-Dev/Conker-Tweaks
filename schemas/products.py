@@ -11,3 +11,12 @@ class ProductCreate(BaseModel):
 class LicenseKeyCreate(BaseModel):
     product_id: int
     key: str
+    
+class ProductUpdate(BaseModel):
+    name: str
+    description: str
+    price: float
+    stock: int
+    needs_license: bool
+    download_link: str
+

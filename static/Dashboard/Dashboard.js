@@ -1,4 +1,4 @@
-const token = localStorage.getItem("access_token"); // ✅ available globally
+const token = localStorage.getItem("access_token");
 
 window.addEventListener("DOMContentLoaded", () => {
   if (!token) {
@@ -62,6 +62,7 @@ window.addEventListener("DOMContentLoaded", () => {
               <button class="purchase-btn" onclick="addKey(${product.id})">Add License Key</button>
               <button class="purchase-btn" onclick="deleteProduct(${product.id})">Delete</button>
               <button class="purchase-btn" onclick="setInfiniteStock(${product.id})">Set Infinite Stock</button>
+              <button class="purchase-btn" onclick="editProduct(${product.id}, '${product.name}', \`${product.description}\`, ${product.price}, ${product.stock}, '${product.download_link}', ${product.needs_license})">Edit</button>
             `;
             list.appendChild(div);
           });
@@ -155,4 +156,52 @@ window.setInfiniteStock = function(productId) {
       alert("Failed to set stock to infinite");
     });
 };
+
+window.editProduct = function (id, name, description, price, stock, link, needsLicense) {
+  const newName = prompt("Edit name:", name);
+  if (!newName) return;
+
+  const newDesc = prompt("Edit description (\\n for new lines):", description);
+  if (newDesc === null) return;
+
+  const newPrice = parseFloat(prompt("Edit price:", price));
+  if (isNaN(newPrice)) return;
+
+  const newStock = parseInt(prompt("Edit stock (-1 for infinite):", stock));
+  if (isNaN(newStock)) return;
+
+  const newLink = prompt("Edit download link:", link);
+  if (!newLink) return;
+
+  const newNeedsLicense = confirm("Does this require a license key?");
+
+  fetch(`https://conker-tweaks-production.up.railway.app/owner/update-product/${productId}`, {
+    method: "PATCH",
+    headers: {
+      "Authorization": "Bearer " + token,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      name: newName,
+      description: newDesc,
+      price: newPrice,
+      stock: newStock,
+      download_link: newLink,
+      needs_license: newNeedsLicense
+    })
+  })
+    .then(res => {
+      if (!res.ok) throw new Error("Update failed");
+      return res.json();
+    })
+    .then(() => {
+      alert("Product updated");
+      loadAdminData();
+    })
+    .catch(err => {
+      console.error(err);
+      alert("Error updating product");
+    });
+};
+
 

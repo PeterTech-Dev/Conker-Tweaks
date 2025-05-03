@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from database import get_db
 from models.products import Product
-from schemas.products import ProductCreate, LicenseKeyCreate
+from schemas.products import ProductCreate, LicenseKeyCreate, ProductUpdate
 from models.licenses import LicenseKey
 from auth.routes import get_current_user
 from models.users import User
@@ -130,3 +130,28 @@ def set_infinite_stock(
     product.stock = -1
     db.commit()
     return {"message": "Stock set to infinite"}
+
+@owner_router.patch("/update-product/{product_id}")
+def update_product(
+    product_id: int,
+    updated_data: ProductUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    is_admin(current_user)
+
+    product = db.query(Product).filter(Product.id == product_id).first()
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+
+    product.name = updated_data.name
+    product.description = updated_data.description
+    product.price = updated_data.price
+    product.stock = updated_data.stock
+    product.needs_license = updated_data.needs_license
+    product.download_link = updated_data.download_link
+
+    db.commit()
+    db.refresh(product)
+
+    return {"message": "Product updated successfully", "product": product}
