@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Request, HTTPException, FastAPI
+from fastapi import APIRouter, Request, Depends, HTTPException
 from fastapi.responses import JSONResponse
 import httpx
 import os
@@ -7,8 +7,13 @@ from dotenv import load_dotenv
 from database import SessionLocal
 from models.products import Product
 from models.licenses import LicenseKey
+from models.order import Order, OrderItem
+from auth.auth_utils import get_current_user
+from sqlalchemy.orm import Session
+from database import get_db
 import stripe
 from paypalcheckoutsdk.core import PayPalHttpClient, SandboxEnvironment
+from paypalcheckoutsdk.orders import OrdersCaptureRequest
 
 order_router = APIRouter()
 
@@ -44,11 +49,6 @@ async def get_paypal_access_token():
 
         return response.json()["access_token"]
 
-@order_router.post("/create/paypal")
-async def create_paypal_order(data: dict):
-    # mock response for now
-    return {"id": "TEST_ORDER_ID"}  # eventually hook into PayPal API
-
 @order_router.post("/create/stripe")
 async def create_stripe_checkout(request: Request):
     body = await request.json()
@@ -74,7 +74,60 @@ async def create_stripe_checkout(request: Request):
     return JSONResponse(content={"checkout_url": session.url}) 
 
 @order_router.post("/orders/{order_id}/capture")
-async def create_paypal_order(cart):
+async def capture_order(order_id: str, db: Session = Depends(get_db)):
+    capture_request = OrdersCaptureRequest(order_id)
+    capture_request.request_body({})
+
+    try:
+        response = paypal_client.execute(capture_request)
+        order_data = response.result.__dict__["_dict"]
+
+        transaction_id = order_data.get("id")
+        if not transaction_id:
+            raise HTTPException(status_code=400, detail="Transaction ID not found")
+
+        order = db.query(Order).filter(Order.paypal_order_id == order_id).first()
+        if not order:
+            raise HTTPException(status_code=404, detail="Order not found")
+
+        assigned_keys = []
+        for item in order.order_items:
+            product = db.query(Product).filter(Product.id == item.product_id).first()
+            if not product:
+                continue
+
+            license_key = db.query(LicenseKey).filter(
+                LicenseKey.product_id == item.product_id,
+                LicenseKey.is_used == False
+            ).first()
+
+            if not license_key:
+                continue  # Or raise error if all items must have keys
+
+            license_key.is_used = True
+            license_key.assigned_to_email = order.email
+            db.commit()
+
+            assigned_keys.append({
+                "product_id": item.product_id,
+                "license_key": license_key.key,
+                "download_link": product.download_link
+            })
+
+        return JSONResponse(content={
+            "transaction_id": transaction_id,
+            "status": order_data.get("status"),
+            "licenses": assigned_keys,
+            "order": order_data
+        })
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@order_router.post("/orders/create")
+async def create_paypal_order(request: Request):
+    cart = await request.json()
     access_token = await get_paypal_access_token()
 
     headers = {
@@ -83,12 +136,15 @@ async def create_paypal_order(cart):
     }
 
     items = []
+    total_amount = 0
     for item in cart["cart"]:
+        total = float(item["price"]) * int(item["quantity"])
+        total_amount += total
         items.append({
             "name": item["name"],
             "unit_amount": {
                 "currency_code": "USD",
-                "value": str(item["price"])
+                "value": f"{item['price']:.2f}"
             },
             "quantity": str(item["quantity"]),
         })
@@ -96,16 +152,23 @@ async def create_paypal_order(cart):
     data = {
         "intent": "CAPTURE",
         "purchase_units": [{
-            "items": items,
             "amount": {
                 "currency_code": "USD",
-                "value": str(sum(float(i["unit_amount"]["value"]) * int(i["quantity"]) for i in items))
-            }
+                "value": f"{total_amount:.2f}",
+                "breakdown": {
+                    "item_total": {
+                        "currency_code": "USD",
+                        "value": f"{total_amount:.2f}"
+                    }
+                }
+            },
+            "items": items
         }]
     }
 
     async with httpx.AsyncClient() as client:
         response = await client.post(PAYPAL_ORDERS_API, headers=headers, json=data)
         response.raise_for_status()
-        return response.json()["id"]
+        return response.json()
+
 

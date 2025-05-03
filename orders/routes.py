@@ -11,7 +11,8 @@ from auth.auth_utils import get_current_user
 from database import SessionLocal, get_db
 from models.users import User
 from models.licenses import LicenseKey
-from models.orders import Order
+from models.order import Order
+from models.order_items import OrderItem
 from models.products import Product
 import stripe
 import httpx
@@ -91,11 +92,22 @@ async def create_order(request: Request, db: Session = Depends(get_db), current_
             email=current_user.email,
             price=float(first_item["price"]),
             product_id=first_item["id"],
+            amount_paid=total_amount,
             paypal_order_id=paypal_order_id
         )
-        db.add(new_order)
-        db.commit()
 
+        db.add(new_order)
+        db.flush()
+        
+        for item in items:
+            db.add(OrderItem(
+                order_id=new_order.id,
+                product_id=item["id"],
+                quantity=item["quantity"],
+                price=item["price"]
+            ))
+
+        db.commit()
         return data
 
     except Exception as e:
