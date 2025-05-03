@@ -12,3 +12,4 @@ class OrderItem(Base):
     price = Column(Float, nullable=False)
 
     order = relationship("Order", back_populates="order_items")
+    product = relationship("Product") 
