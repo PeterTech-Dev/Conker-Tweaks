@@ -130,47 +130,50 @@ async def capture_order(order_id: str, db: Session = Depends(get_db)):
         if not transaction_id:
             raise HTTPException(status_code=400, detail="Transaction ID not found")
 
-        print(f"Looking for order with PayPal ID: {order_id}")
         order = db.query(Order).filter(Order.paypal_order_id == order_id).first()
-        print(f"Found order: {order}")
 
         if not order:
             raise HTTPException(status_code=404, detail="Order not found")
+        
+        all_licenses = []
 
-        # Get product info
-        product = db.query(Product).filter(Product.id == order.product_id).first()
-        if not product:
-            raise HTTPException(status_code=500, detail="Product not found")
+        for item in order.cart:
+            product_id = item.get("id")
+            quantity = item.get("quantity", 1)
 
-        # Assign license key
-        existing_license = db.query(LicenseKey).filter(
-            LicenseKey.product_id == order.product_id,
-            LicenseKey.is_used == False
-        ).first()
+            product = db.query(Product).filter(Product.id == product_id).first()
+            if not product:
+                continue  # skip invalid products
 
-        if not existing_license:
-            raise HTTPException(status_code=500, detail="No license keys available")
+            available_keys = db.query(LicenseKey).filter(
+                LicenseKey.product_id == product_id,
+                LicenseKey.is_used == False
+            ).limit(quantity).all()
 
-        existing_license.is_used = True
-        existing_license.assigned_to_email = order.email
+            if len(available_keys) < quantity:
+                raise HTTPException(status_code=500, detail=f"Not enough license keys for product {product.name}")
+
+            for key in available_keys:
+                key.is_used = True
+                key.assigned_to_email = order.email
+                all_licenses.append({
+                    "license": key.key,
+                    "download": product.download_link
+                })
+
         db.commit()
 
         return JSONResponse(
             content={
                 "transaction_id": transaction_id,
                 "status": status,
-                "license_key": existing_license.key,
-                "download_link": product.download_link,
-                "order": order_data,
+                "licenses": all_licenses,
+                "order": order_data
             }
         )
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
-
-    except HttpError as e:
-        return JSONResponse(status_code=e.status_code, content={"error": str(e)})
     
 @order_router.get("/order-details/{transaction_id}")
 def get_order_details(transaction_id: str, db: Session = Depends(get_db)):
