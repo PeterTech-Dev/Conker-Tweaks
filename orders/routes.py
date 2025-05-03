@@ -139,7 +139,8 @@ async def capture_order(order_id: str, db: Session = Depends(get_db)):
 
         licenses = []
 
-        for item in order.items:
+        for item in order.order_items:
+            print(item.product_id, item.quantity, item.price)
             available_keys = db.query(LicenseKey).filter(
                 LicenseKey.product_id == item.product_id,
                 LicenseKey.is_used == False
