@@ -242,6 +242,7 @@ paypal.Buttons({
 
 
   onApprove: async function (data) {
+    const token = localStorage.getItem('access_token');
     const response = await fetch(
       `https://conker-tweaks-production.up.railway.app/order/api/orders/${data.orderID}/capture`,
       {
