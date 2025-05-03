@@ -53,15 +53,16 @@ async def get_paypal_access_token():
 async def stripe_create_session(request: Request):
     try:
         body = await request.json()
-        print("🛒 Received Stripe cart:", body)
+        print("Cart payload:", body)
 
         cart = body.get("cart", [])
         if not cart:
+            print("Cart is empty or missing.")
             raise HTTPException(status_code=400, detail="Cart is empty")
 
         line_items = []
         for item in cart:
-            print("📦 Processing item:", item)
+            print("Item:", item)
             line_items.append({
                 'price_data': {
                     'currency': 'usd',
@@ -81,10 +82,11 @@ async def stripe_create_session(request: Request):
             cancel_url="https://conker-tweaks-production.up.railway.app/static/Checkout/Checkout.html",
         )
 
+        print("Stripe session created:", session.url)
         return JSONResponse(content={"checkout_url": session.url})
-    
+
     except Exception as e:
-        print("❌ Stripe session creation error:", e)
+        print("Stripe error:", e)
         raise HTTPException(status_code=500, detail=str(e))
 
 
