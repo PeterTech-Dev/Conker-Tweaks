@@ -1,0 +1,26 @@
+Metadata-Version: 2.1
+Name: rustPlusPushReceiver
+Version: 0.6.1
+Summary: Subscribe to GCM/FCM and receive notifications
+Home-page: https://github.com/olijeffers0n/push_receiver
+Author: Franc[e]sco & olijeffers0n
+License: Unlicense
+Keywords: fcm gcm push notification firebase google
+Classifier: Programming Language :: Python :: 2
+Classifier: Programming Language :: Python :: 3
+Classifier: Intended Audience :: Developers
+Classifier: License :: Public Domain
+Classifier: Topic :: Software Development :: Libraries
+Requires-Dist: oscrypto
+Requires-Dist: protobuf
+Requires-Dist: cryptography
+Requires-Dist: betterproto
+Requires-Dist: requests
+Provides-Extra: example
+Requires-Dist: appdirs ; extra == 'example'
+
+Subscribe to GCM/FCM and receive notifications
+
+python implementation of https://github.com/MatthieuLemoine/push-receiver
+
+Used by https://github.com/olijeffers0n/rustplus
