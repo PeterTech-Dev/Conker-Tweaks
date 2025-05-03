@@ -187,7 +187,7 @@ async function finishLogin(token) {
   const user = await profileRes.json();
 
   if (user.is_admin && user.has_2fa) {
-    window.location.href = "/static/Admin/Dashboard.html";
+    window.location.href = "/static/Dashboard/Dashboard.html";
   } else {
     window.location.href = "/static/viewprofile/viewprofile.html";
   }
