@@ -172,6 +172,27 @@ async def capture_order(order_id: str, db: Session = Depends(get_db)):
     except HttpError as e:
         return JSONResponse(status_code=e.status_code, content={"error": str(e)})
     
+@order_router.get("/order-details/{transaction_id}")
+def get_order_details(transaction_id: str, db: Session = Depends(get_db)):
+    order = db.query(Order).filter(Order.paypal_order_id == transaction_id).first()
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+
+    license = db.query(LicenseKey).filter(
+        LicenseKey.product_id == order.product_id,
+        LicenseKey.assigned_to_email == order.email,
+        LicenseKey.is_used == True
+    ).first()
+
+    product = db.query(Product).filter(Product.id == order.product_id).first()
+
+    return {
+        "transaction_id": transaction_id,
+        "license": license.key if license else None,
+        "download": product.download_link if product else None
+    }
+
+    
 @order_router.post("/create-stripe-checkout")
 async def create_stripe_checkout(cart: list):
     line_items = []
