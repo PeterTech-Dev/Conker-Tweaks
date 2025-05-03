@@ -8,6 +8,7 @@ from auth.routes import get_current_user
 from models.users import User
 from models.products import Product
 from models.purchases import Purchase
+from models.order_items import OrderItem
 
 owner_router = APIRouter()
 
@@ -15,6 +16,7 @@ def is_admin(user: User):
     if not user.is_admin:
         raise HTTPException(status_code=403, detail="Admins only")
     return True
+
 @owner_router.get("/dashboard")
 def admin_dashboard(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     if not current_user.is_admin or not current_user.has_2fa:
@@ -22,13 +24,17 @@ def admin_dashboard(db: Session = Depends(get_db), current_user: User = Depends(
 
     total_users = db.query(User).count()
     total_products = db.query(Product).count()
-    total_purchases = db.query(Purchase).count()
+
+    # Sum of all purchased quantities across all orders
+    total_purchases = db.query(OrderItem).with_entities(OrderItem.quantity).all()
+    total_purchases_count = sum(q[0] for q in total_purchases)
 
     return {
         "users": total_users,
         "products": total_products,
-        "purchases": total_purchases
-    }   
+        "purchases": total_purchases_count
+    }
+
 # Create a new product
 @owner_router.post("/create-product")
 def create_product(name: str, has_keys: bool, download_link: str, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
@@ -46,7 +52,7 @@ def add_license_key(license: LicenseKeyCreate, db: Session = Depends(get_db)):
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
 
-    keys = license.key.splitlines()  # support newline-separated keys
+    keys = license.key.splitlines()
     for key in keys:
         new_key = LicenseKey(key=key.strip(), product_id=product.id)
         db.add(new_key)

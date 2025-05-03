@@ -9,6 +9,6 @@ class OrderItem(Base):
     order_id = Column(Integer, ForeignKey("orders.id"))
     product_id = Column(Integer, ForeignKey("products.id"))
     quantity = Column(Integer, nullable=False)
-    price = Column(Float, nullable=False)  # per unit
+    price = Column(Float, nullable=False)
 
 order = relationship("Order", back_populates="order_items")
