@@ -31,4 +31,41 @@ else:
     print("✅ Admin user created successfully!")
     print("🔐 Admin 2FA secret (scan in Google Authenticator):", totp.secret)
 
+# Add default products
+default_products = [
+    Product(
+        name="Premium",
+        description="Delivers a Noticeable FPS Boost\nOptimizes Latency for a More Responsive Feel\nPuts You in Control of Your System’s Performance",
+        price=20.00,
+        stock=10,
+        needs_license=True,
+        download_link="https://example.com/premium-download"
+    ),
+    Product(
+        name="Manual",
+        description="Precision-Tuned System Optimization\nUltra-Low Latency Configuration\nExpert-Level Custom Tweaks",
+        price=30.00,
+        stock=10,
+        needs_license=True,
+        download_link="https://example.com/manual-download"
+    ),
+    Product(
+        name="Overclock",
+        description="Full-System Overclocking (CPU, GPU & RAM)\nProfessionally Tuned & Stability Tested\nCustomized for Your Workflow or Playstyle",
+        price=40.00,
+        stock=10,
+        needs_license=True,
+        download_link="https://example.com/overclock-download"
+    ),
+]
+
+for product in default_products:
+    existing = db.query(Product).filter_by(name=product.name).first()
+    if not existing:
+        db.add(product)
+        print(f"✅ Added product: {product.name}")
+    else:
+        print(f"⚠️ Product already exists: {product.name}")
+
+db.commit()
 db.close()
