@@ -201,15 +201,22 @@ function getCartTotal() {
 }
 
 async function payWithStripe() {
-    const total = calculateTotal();
-    const response = await fetch('https://conker-tweaks-production.up.railway.app/order/api/create/stripe', { 
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ amount: total })
-    });
-    const data = await response.json();
+  const cart = JSON.parse(localStorage.getItem('cart')) || [];
+  
+  const response = await fetch('/stripe/create-session', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ cart })
+  });
+
+  const data = await response.json();
+  if (data.checkout_url) {
     window.location.href = data.checkout_url;
+  } else {
+    alert('Stripe checkout failed.');
+  }
 }
+
 
 paypal.Buttons({
   style: {

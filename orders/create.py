@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Request, Depends, HTTPException
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 import httpx
 import os
 import base64
@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 from database import SessionLocal
 from models.products import Product
 from models.licenses import LicenseKey
-from models.order import Order, OrderItem
+from models.order import Order
 from auth.auth_utils import get_current_user
 from sqlalchemy.orm import Session
 from database import get_db
@@ -49,29 +49,40 @@ async def get_paypal_access_token():
 
         return response.json()["access_token"]
 
-@order_router.post("/create/stripe")
-async def create_stripe_checkout(request: Request):
+@order_router.post("/stripe/create-session")
+async def stripe_create_session(request: Request):
     body = await request.json()
-    amount = body.get("amount")
+    cart = body.get("cart", [])
 
-    session = stripe.checkout.Session.create(
-        payment_method_types=['card'],
-        line_items=[{
+    if not cart:
+        raise HTTPException(status_code=400, detail="Cart is empty")
+
+    line_items = []
+    for item in cart:
+        line_items.append({
             'price_data': {
                 'currency': 'usd',
                 'product_data': {
-                    'name': 'Conker Tweaks Purchase',
+                    'name': item['name'],
                 },
-                'unit_amount': int(float(amount) * 100),
+                'unit_amount': int(float(item['price']) * 100),
             },
-            'quantity': 1,
-        }],
-        mode='payment',
-        success_url="http://https://conker-tweaks-production.up.railway.app/Checkout/thankyou.html",
-        cancel_url="http://https://conker-tweaks-production.up.railway.app/Checkout/Checkout.html",
-    )
+            'quantity': item['quantity'],
+        })
 
-    return JSONResponse(content={"checkout_url": session.url}) 
+    try:
+        session = stripe.checkout.Session.create(
+            payment_method_types=['card'],
+            line_items=line_items,
+            mode='payment',
+            success_url="https://conker-tweaks-production.up.railway.app/static/Checkout/thankyou.html?session_id={CHECKOUT_SESSION_ID}",
+            cancel_url="https://conker-tweaks-production.up.railway.app/static/Checkout/Checkout.html",
+        )
+        return JSONResponse(content={"checkout_url": session.url})
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 @order_router.post("/orders/{order_id}/capture")
 async def capture_order(order_id: str, db: Session = Depends(get_db)):
