@@ -51,26 +51,28 @@ async def get_paypal_access_token():
 
 @stripe_router.post("/stripe/create-session")
 async def stripe_create_session(request: Request):
-    body = await request.json()
-    cart = body.get("cart", [])
-
-    if not cart:
-        raise HTTPException(status_code=400, detail="Cart is empty")
-
-    line_items = []
-    for item in cart:
-        line_items.append({
-            'price_data': {
-                'currency': 'usd',
-                'product_data': {
-                    'name': item['name'],
-                },
-                'unit_amount': int(float(item['price']) * 100),
-            },
-            'quantity': item['quantity'],
-        })
-
     try:
+        body = await request.json()
+        print("🛒 Received Stripe cart:", body)
+
+        cart = body.get("cart", [])
+        if not cart:
+            raise HTTPException(status_code=400, detail="Cart is empty")
+
+        line_items = []
+        for item in cart:
+            print("📦 Processing item:", item)
+            line_items.append({
+                'price_data': {
+                    'currency': 'usd',
+                    'product_data': {
+                        'name': item['name'],
+                    },
+                    'unit_amount': int(float(item['price']) * 100),
+                },
+                'quantity': item['quantity'],
+            })
+
         session = stripe.checkout.Session.create(
             payment_method_types=['card'],
             line_items=line_items,
@@ -78,10 +80,13 @@ async def stripe_create_session(request: Request):
             success_url="https://conker-tweaks-production.up.railway.app/static/Checkout/thankyou.html?session_id={CHECKOUT_SESSION_ID}",
             cancel_url="https://conker-tweaks-production.up.railway.app/static/Checkout/Checkout.html",
         )
-        return JSONResponse(content={"checkout_url": session.url})
 
+        return JSONResponse(content={"checkout_url": session.url})
+    
     except Exception as e:
+        print("❌ Stripe session creation error:", e)
         raise HTTPException(status_code=500, detail=str(e))
+
 
 
 @stripe_router.post("/orders/{order_id}/capture")
