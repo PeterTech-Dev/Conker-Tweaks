@@ -15,7 +15,7 @@ import stripe
 from paypalcheckoutsdk.core import PayPalHttpClient, SandboxEnvironment
 from paypalcheckoutsdk.orders import OrdersCaptureRequest
 
-order_router = APIRouter()
+stripe_router = APIRouter()
 
 load_dotenv()
 
@@ -49,7 +49,7 @@ async def get_paypal_access_token():
 
         return response.json()["access_token"]
 
-@order_router.post("/stripe/create-session")
+@stripe_router.post("/stripe/create-session")
 async def stripe_create_session(request: Request):
     body = await request.json()
     cart = body.get("cart", [])
@@ -84,7 +84,7 @@ async def stripe_create_session(request: Request):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@order_router.post("/orders/{order_id}/capture")
+@stripe_router.post("/orders/{order_id}/capture")
 async def capture_order(order_id: str, db: Session = Depends(get_db)):
     capture_request = OrdersCaptureRequest(order_id)
     capture_request.request_body({})
@@ -136,7 +136,7 @@ async def capture_order(order_id: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@order_router.post("/orders/create")
+@stripe_router.post("/orders/create")
 async def create_paypal_order(request: Request):
     cart = await request.json()
     access_token = await get_paypal_access_token()

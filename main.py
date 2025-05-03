@@ -6,6 +6,7 @@ from fastapi.routing import APIRoute
 from auth.routes import auth_router
 from products.routes import products_router
 from owner.routes import owner_router
+from orders.create import stripe_router
 from orders.routes import order_router
 from orders.webhooks import router as webhook_router
 
@@ -26,6 +27,7 @@ app.include_router(auth_router, prefix="/auth", tags=["Auth"])
 app.include_router(products_router)
 app.include_router(owner_router, prefix="/owner", tags=["Owner"])
 app.include_router(order_router, prefix="/order/api", tags=["Orders"])
+app.include_router(stripe_router, prefix="/order/api")
 app.include_router(webhook_router, prefix="/webhooks")
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
