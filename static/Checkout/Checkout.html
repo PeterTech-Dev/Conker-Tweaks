@@ -210,7 +210,7 @@ async function payWithStripe() {
   }
 
   try {
-    const response = await fetch('/order/api/stripe/create-session', {
+    const response = await fetch('https://conker-tweaks-production.up.railway.app/order/api/stripe/create-session', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
