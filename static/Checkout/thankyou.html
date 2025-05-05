@@ -156,8 +156,12 @@ Support/Support.html"
     </div>
   </footer>
   <script>
-    const transactionId = new URLSearchParams(window.location.search).get("transaction_id");
+    const params = new URLSearchParams(window.location.search);
+    const transactionId = params.get("transaction_id");
+    const sessionId = params.get("session_id");
+  
     if (transactionId) {
+      // 🔄 PayPal flow
       fetch(`/order/api/order-details/${transactionId}`)
         .then(res => res.json())
         .then(data => {
@@ -172,8 +176,28 @@ Support/Support.html"
             container.appendChild(div);
           });
         });
+    } else if (sessionId) {
+      // 🟣 Stripe flow
+      fetch(`/order/api/stripe/session/${sessionId}`)
+        .then(res => res.json())
+        .then(data => {
+          document.getElementById("transaction-id").textContent = data.transaction_id;
+          const container = document.getElementById("license-info");
+          data.licenses.forEach(entry => {
+            const div = document.createElement("div");
+            div.innerHTML = `
+              <strong>License Key:</strong> ${entry.license}<br>
+              <strong>Download:</strong> <a href="${entry.download}" target="_blank">${entry.download}</a><hr>
+            `;
+            container.appendChild(div);
+          });
+        })
+        .catch(err => {
+          console.error("Stripe confirmation fetch error:", err);
+        });
     }
-  </script>  
+  </script>
+  
     
 </body>
 </html>

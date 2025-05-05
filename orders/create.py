@@ -147,6 +147,51 @@ async def capture_order(order_id: str, db: Session = Depends(get_db)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@stripe_router.get("/stripe/session/{session_id}")
+async def get_stripe_checkout_details(session_id: str, db: Session = Depends(get_db)):
+    try:
+        session = stripe.checkout.Session.retrieve(session_id)
+        customer_email = session.get("customer_details", {}).get("email")
+
+        if not customer_email:
+            raise HTTPException(status_code=400, detail="Missing customer email")
+
+        order = db.query(Order).filter(Order.email == customer_email).order_by(Order.id.desc()).first()
+        if not order:
+            raise HTTPException(status_code=404, detail="Order not found")
+
+        licenses = []
+        for item in order.order_items:
+            available_keys = db.query(LicenseKey).filter(
+                LicenseKey.product_id == item.product_id,
+                LicenseKey.is_used == False
+            ).limit(item.quantity).all()
+
+            if len(available_keys) < item.quantity:
+                raise HTTPException(status_code=500, detail="Not enough license keys")
+
+            for key in available_keys:
+                key.is_used = True
+                key.assigned_to_email = order.email
+                licenses.append({
+                    "license": key.key,
+                    "download": item.product.download_link  # assumes relationship
+                })
+
+        db.commit()
+
+        return {
+            "transaction_id": session.id,
+            "status": session.payment_status,
+            "licenses": licenses,
+            "order": {
+                "email": order.email,
+                "amount_paid": order.amount_paid,
+            }
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 @stripe_router.post("/orders/create")
 async def create_paypal_order(request: Request):
