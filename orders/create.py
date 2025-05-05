@@ -149,10 +149,10 @@ async def capture_order(order_id: str, db: Session = Depends(get_db)):
         assigned_keys = []
         for item in order.order_items:
             product = db.query(Product).filter(Product.id == item.product_id).first()
-            if not product:
-                continue
-            
-            product.stock -= item.quantity
+            if product and product.stock != -1:
+                product.stock -= item.quantity
+                if product.stock < 0:
+                    product.stock = 0
 
             license_key = db.query(LicenseKey).filter(
                 LicenseKey.product_id == item.product_id,
@@ -212,6 +212,12 @@ async def get_stripe_checkout_details(session_id: str, db: Session = Depends(get
 
             if len(available_keys) < item.quantity:
                 raise HTTPException(status_code=500, detail="Not enough license keys")
+            
+            product = db.query(Product).filter(Product.id == item.product_id).first()
+            if product and product.stock != -1:
+                product.stock -= item.quantity
+                if product.stock < 0:
+                    product.stock = 0
 
             for key in available_keys:
                 key.is_used = True
