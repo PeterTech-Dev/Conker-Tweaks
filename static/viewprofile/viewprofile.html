@@ -289,7 +289,7 @@ Support/Support.html"
           </button>
           <div class="accordion-content">
             ${keys.map(k => `<p><strong>Key:</strong> ${k.key}</p>`).join('')}
-            <p><strong>Download:</strong> <a href="${keys[0].download_link}" target="_blank">${keys[0].download_link}</a></p>
+            <p><strong>Download:</strong> <a href="${keys[0].download}" target="_blank">${keys[0].download}</a></p>
           </div>
         `;
         licenseSection.appendChild(section);
