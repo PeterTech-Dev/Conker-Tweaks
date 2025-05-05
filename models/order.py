@@ -15,4 +15,5 @@ class Order(Base):
     amount_paid = Column(Float, nullable=False)
     timestamp = Column(DateTime(timezone=True), server_default=func.now())
     paypal_order_id = Column(String, unique=True, index=True)
+    stripe_session_id = Column(String, nullable=True)
     order_items = relationship("OrderItem", back_populates="order")

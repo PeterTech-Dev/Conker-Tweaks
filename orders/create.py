@@ -8,6 +8,7 @@ from database import SessionLocal
 from models.products import Product
 from models.licenses import LicenseKey
 from models.order import Order
+from models.order_items import OrderItem
 from models.users import User
 from auth.auth_utils import get_current_user
 from sqlalchemy.orm import Session
@@ -67,11 +68,16 @@ async def stripe_create_session(
         if not cart:
             raise HTTPException(status_code=400, detail="Cart is empty")
 
-        email = current_user.email  # ✅ use the logged-in user's email
+        email = current_user.email  # Use the authenticated user's email
 
         line_items = []
+        total_amount = 0
+
         for item in cart:
             print("➡️  Item:", item)
+            total_price = float(item['price']) * int(item['quantity'])
+            total_amount += total_price
+
             line_items.append({
                 'price_data': {
                     'currency': 'usd',
@@ -83,6 +89,7 @@ async def stripe_create_session(
                 'quantity': item['quantity'],
             })
 
+        # Create Stripe checkout session
         session = stripe.checkout.Session.create(
             payment_method_types=['card'],
             line_items=line_items,
@@ -92,12 +99,35 @@ async def stripe_create_session(
             customer_email=email,
         )
 
+        # Save order to DB
+        new_order = Order(
+            user_id=current_user.id,
+            email=email,
+            price=float(cart[0]['price']),
+            amount_paid=total_amount,
+            product_id=cart[0]['id'],
+            stripe_session_id=session.id
+        )
+        db.add(new_order)
+        db.flush()  # So new_order.id is available
+
+        for item in cart:
+            db.add(OrderItem(
+                order_id=new_order.id,
+                product_id=item['id'],
+                quantity=item['quantity'],
+                price=item['price']
+            ))
+
+        db.commit()
+
         print("Session URL:", session.url)
         return JSONResponse(content={"checkout_url": session.url})
 
     except Exception as e:
         print("Stripe error:", e)
         raise HTTPException(status_code=500, detail=str(e))
+
 
 @stripe_router.post("/orders/{order_id}/capture")
 async def capture_order(order_id: str, db: Session = Depends(get_db)):
