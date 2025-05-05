@@ -166,8 +166,8 @@ Support/Support.html"
         .then(res => res.json())
         .then(data => {
           document.getElementById("transaction-id").textContent = data.transaction_id;
-          licenseContainer.innerHTML = "";
           const container = document.getElementById("license-info");
+          container.innerHTML = "";
           data.licenses.forEach(entry => {
             const div = document.createElement("div");
             div.innerHTML = `
@@ -184,8 +184,8 @@ Support/Support.html"
         .then(res => res.json())
         .then(data => {
           document.getElementById("transaction-id").textContent = data.transaction_id;
-          licenseContainer.innerHTML = "";
           const container = document.getElementById("license-info");
+          container.innerHTML = "";
           data.licenses.forEach(entry => {
             const div = document.createElement("div");
             div.innerHTML = `

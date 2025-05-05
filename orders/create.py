@@ -172,10 +172,10 @@ async def capture_order(order_id: str, db: Session = Depends(get_db)):
                 "download_link": product.download_link
             })
             
-            if user:
-                user.current_package = product.name
-                user.license_key = license_keys[-1].key if license_keys else None
-                user.download_link = product.download_link
+            if User:
+                User.current_package = product.name
+                User.license_key = license_key[-1].key if license_key else None
+                User.download_link = product.download_link
 
         return JSONResponse(content={
             "transaction_id": transaction_id,
