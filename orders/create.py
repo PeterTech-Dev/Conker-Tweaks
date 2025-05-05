@@ -153,9 +153,12 @@ async def capture_order(order_id: str, db: Session = Depends(get_db)):
 @stripe_router.get("/stripe/session/{session_id}")
 async def get_stripe_checkout_details(session_id: str, db: Session = Depends(get_db)):
     try:
-        session = stripe.checkout.Session.retrieve(session_id)
-        customer_email = session.get("customer_details", {}).get("email")
+        session = stripe.checkout.Session.retrieve(
+            session_id,
+            expand=["customer_details"]
+        )
 
+        customer_email = session.customer_details.email
         if not customer_email:
             raise HTTPException(status_code=400, detail="Missing customer email")
 
@@ -178,7 +181,7 @@ async def get_stripe_checkout_details(session_id: str, db: Session = Depends(get
                 key.assigned_to_email = order.email
                 licenses.append({
                     "license": key.key,
-                    "download": item.product.download_link  # assumes relationship
+                    "download": item.product.download_link
                 })
 
         db.commit()

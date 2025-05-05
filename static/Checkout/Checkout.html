@@ -190,8 +190,7 @@ function loadCart() {
 window.addEventListener("DOMContentLoaded", function() {
   loadCart();
 });
-</script> 
-<script>
+
 function getCartTotal() {
   let total = 0;
   const cart = JSON.parse(localStorage.getItem('cart')) || [];
@@ -211,28 +210,13 @@ async function payWithStripe() {
   }
 
   try {
-    // Get email from /auth/profile
-    const profileRes = await fetch("/auth/profile", {
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
-
-    if (!profileRes.ok) throw new Error("Failed to fetch user profile");
-    const profile = await profileRes.json();
-
-    const email = profile.email;
-    if (!email) {
-      alert("Email not found in profile.");
-      return;
-    }
-
-    // Now create Stripe session
     const response = await fetch('/order/api/stripe/create-session', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`
       },
-      body: JSON.stringify({ cart })
+      body: JSON.stringify({ cart })  // ✅ no email needed
     });
 
     const data = await response.json();
@@ -247,8 +231,6 @@ async function payWithStripe() {
     alert("Something went wrong during checkout.");
   }
 }
-
-
 
 paypal.Buttons({
   style: {
