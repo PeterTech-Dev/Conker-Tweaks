@@ -63,6 +63,10 @@ async def stripe_create_session(request: Request):
         cart = body.get("cart", [])
         if not cart:
             raise HTTPException(status_code=400, detail="Cart is empty")
+        
+        email = body.get("email")
+        if not email:
+            raise HTTPException(status_code=400, detail="Missing email in cart payload")
 
         line_items = []
         for item in cart:
@@ -84,6 +88,7 @@ async def stripe_create_session(request: Request):
             mode='payment',
             success_url="https://conker-tweaks-production.up.railway.app/static/Checkout/thankyou.html?session_id={CHECKOUT_SESSION_ID}",
             cancel_url="https://conker-tweaks-production.up.railway.app/static/Checkout/Checkout.html",
+            customer_email=email,
         )
 
         print("Session URL:", session.url)
@@ -191,6 +196,7 @@ async def get_stripe_checkout_details(session_id: str, db: Session = Depends(get
         }
 
     except Exception as e:
+        print("❌ Stripe session fetch error:", e)
         raise HTTPException(status_code=500, detail=str(e))
 
 @stripe_router.post("/orders/create")

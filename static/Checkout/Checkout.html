@@ -203,20 +203,50 @@ function getCartTotal() {
 
 async function payWithStripe() {
   const cart = JSON.parse(localStorage.getItem('cart')) || [];
-  
-  const response = await fetch('https://conker-tweaks-production.up.railway.app/order/api/stripe/create-session', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ cart })
-  });
+  const token = localStorage.getItem('access_token');
 
-  const data = await response.json();
-  if (data.checkout_url) {
-    window.location.href = data.checkout_url;
-  } else {
-    alert('Stripe checkout failed.');
+  if (!token) {
+    alert("Please log in before checking out.");
+    return;
+  }
+
+  try {
+    // Get email from /auth/profile
+    const profileRes = await fetch("/auth/profile", {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+
+    if (!profileRes.ok) throw new Error("Failed to fetch user profile");
+    const profile = await profileRes.json();
+
+    const email = profile.email;
+    if (!email) {
+      alert("Email not found in profile.");
+      return;
+    }
+
+    // Now create Stripe session
+    const response = await fetch('/order/api/stripe/create-session', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ email, cart })
+    });
+
+    const data = await response.json();
+    if (data.checkout_url) {
+      window.location.href = data.checkout_url;
+    } else {
+      alert('Stripe checkout failed.');
+    }
+
+  } catch (err) {
+    console.error("Stripe checkout error:", err);
+    alert("Something went wrong during checkout.");
   }
 }
+
 
 
 paypal.Buttons({
