@@ -23,6 +23,7 @@ order_router = APIRouter()
 
 PAYPAL_CLIENT_ID = os.getenv("PAYPAL_CLIENT_ID")
 PAYPAL_CLIENT_SECRET = os.getenv("PAYPAL_CLIENT_SECRET")
+stripe.api_key = "sk_test_51RHupjRtKB3AzC2tZu8reO0yYbciA8tlyRW1u7cqc9j1kqbhrCSxKSBSO7fnuZaoyvOaKiZtvZ583ssx3ZTRHba700bk7VO0FN"
 environment = SandboxEnvironment(client_id=PAYPAL_CLIENT_ID, client_secret=PAYPAL_CLIENT_SECRET)
 paypal_client = PayPalHttpClient(environment)
 PAYPAL_API_BASE = "https://api-m.sandbox.paypal.com"
