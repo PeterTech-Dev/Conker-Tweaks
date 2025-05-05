@@ -228,8 +228,11 @@ Support/Support.html"
               .map(line => `<li>${line}</li>`)
               .join('');
     
-            const card = document.createElement("div");
-            card.classList.add("pricing-card");
+              const card = document.createElement("div");
+              card.classList.add("pricing-card");
+              if (product.stock === 0) {
+                card.classList.add("sold-out");
+              }
             card.innerHTML = `
               <h3>${product.name}</h3>
               <h2 class="price">$${Number(product.price).toFixed(2)}</h2>
