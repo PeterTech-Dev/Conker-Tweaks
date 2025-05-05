@@ -21,15 +21,10 @@ load_dotenv()
 
 PAYPAL_CLIENT_ID = os.getenv("PAYPAL_CLIENT_ID")
 PAYPAL_CLIENT_SECRET = os.getenv("PAYPAL_CLIENT_SECRET")
+stripe.api_key = os.getenv("STRIPE_API_KEY")
 PAYPAL_OAUTH_API = "https://api-m.sandbox.paypal.com/v1/oauth2/token"
 PAYPAL_ORDERS_API = "https://api-m.sandbox.paypal.com/v2/checkout/orders"
-
-stripe.api_key = os.getenv("STRIPE_API_KEY")
-
-if not stripe.api_key or not stripe.api_key.startswith("sk_"):
-    raise Exception("❌ Stripe secret key not loaded correctly in create.py")
-
-print("✅ Stripe key loaded in create.py:", stripe.api_key[:6])
+print("🔑 Stripe key loaded:", stripe.api_key)
 
 environment = SandboxEnvironment(client_id=PAYPAL_CLIENT_ID, client_secret=PAYPAL_CLIENT_SECRET)
 paypal_client = PayPalHttpClient(environment)

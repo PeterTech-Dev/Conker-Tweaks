@@ -23,16 +23,10 @@ order_router = APIRouter()
 
 PAYPAL_CLIENT_ID = os.getenv("PAYPAL_CLIENT_ID")
 PAYPAL_CLIENT_SECRET = os.getenv("PAYPAL_CLIENT_SECRET")
+stripe.api_key = os.getenv("STRIPE_API_KEY")
 environment = SandboxEnvironment(client_id=PAYPAL_CLIENT_ID, client_secret=PAYPAL_CLIENT_SECRET)
 paypal_client = PayPalHttpClient(environment)
 PAYPAL_API_BASE = "https://api-m.sandbox.paypal.com"
-
-stripe.api_key = os.getenv("STRIPE_API_KEY")
-
-if not stripe.api_key or not stripe.api_key.startswith("sk_"):
-    raise Exception("❌ Stripe secret key not loaded correctly in create.py")
-
-print("✅ Stripe key loaded in create.py:", stripe.api_key[:6])
 
 async def get_paypal_access_token():
     url = "https://api-m.sandbox.paypal.com/v1/oauth2/token"
