@@ -37,7 +37,7 @@ default_products = [
         name="Premium",
         description="Delivers a Noticeable FPS Boost\nOptimizes Latency for a More Responsive Feel\nPuts You in Control of Your System’s Performance",
         price=20.00,
-        stock=10,
+        stock=0,
         needs_license=True,
         download_link="https://example.com/premium-download"
     ),
@@ -45,7 +45,7 @@ default_products = [
         name="Manual",
         description="Precision-Tuned System Optimization\nUltra-Low Latency Configuration\nExpert-Level Custom Tweaks",
         price=30.00,
-        stock=10,
+        stock=0,
         needs_license=True,
         download_link="https://example.com/manual-download"
     ),
@@ -53,7 +53,7 @@ default_products = [
         name="Overclock",
         description="Full-System Overclocking (CPU, GPU & RAM)\nProfessionally Tuned & Stability Tested\nCustomized for Your Workflow or Playstyle",
         price=40.00,
-        stock=10,
+        stock=0,
         needs_license=True,
         download_link="https://example.com/overclock-download"
     ),

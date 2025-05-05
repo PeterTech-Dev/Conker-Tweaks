@@ -33,3 +33,12 @@ h1, h2 {
 #payment-methods button:hover {
   background-color: #00b8cc;
 }
+
+#paypal-button-container {
+  margin-top: 20px;
+  background-color: #111827;
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: 0 0 20px rgba(0, 207, 255, 0.3);
+}
+

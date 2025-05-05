@@ -234,10 +234,12 @@ async function payWithStripe() {
 
 paypal.Buttons({
   style: {
-    shape: "pill",
-    layout: "horizontal",
-    color: "blue",
-    label: "paypal",
+    layout: 'horizontal',
+    color:  'blue',
+    shape:  'pill',
+    label:  'pay',
+    borderRadius: 12,
+    height: 45
   },
 
   createOrder: function(data, actions) {
