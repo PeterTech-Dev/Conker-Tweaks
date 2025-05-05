@@ -8,6 +8,7 @@ from database import SessionLocal
 from models.products import Product
 from models.licenses import LicenseKey
 from models.order import Order
+from models.users import User
 from auth.auth_utils import get_current_user
 from sqlalchemy.orm import Session
 from database import get_db
@@ -51,9 +52,11 @@ async def get_paypal_access_token():
         return response.json()["access_token"]
 
 @stripe_router.post("/stripe/create-session")
-async def stripe_create_session(request: Request):
-    import stripe
-    import os
+async def stripe_create_session(
+    request: Request,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
     stripe.api_key = os.getenv("STRIPE_API_KEY")
 
     try:
@@ -63,10 +66,8 @@ async def stripe_create_session(request: Request):
         cart = body.get("cart", [])
         if not cart:
             raise HTTPException(status_code=400, detail="Cart is empty")
-        
-        email = body.get("email")
-        if not email:
-            raise HTTPException(status_code=400, detail="Missing email in cart payload")
+
+        email = current_user.email  # ✅ use the logged-in user's email
 
         line_items = []
         for item in cart:
@@ -98,9 +99,6 @@ async def stripe_create_session(request: Request):
         print("Stripe error:", e)
         raise HTTPException(status_code=500, detail=str(e))
 
-
-
-
 @stripe_router.post("/orders/{order_id}/capture")
 async def capture_order(order_id: str, db: Session = Depends(get_db)):
     capture_request = OrdersCaptureRequest(order_id)
@@ -130,7 +128,7 @@ async def capture_order(order_id: str, db: Session = Depends(get_db)):
             ).first()
 
             if not license_key:
-                continue  # Or raise error if all items must have keys
+                continue
 
             license_key.is_used = True
             license_key.assigned_to_email = order.email

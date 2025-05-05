@@ -229,9 +229,10 @@ async function payWithStripe() {
     const response = await fetch('/order/api/stripe/create-session', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
       },
-      body: JSON.stringify({ email, cart })
+      body: JSON.stringify({ cart })
     });
 
     const data = await response.json();
