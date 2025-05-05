@@ -151,6 +151,8 @@ async def capture_order(order_id: str, db: Session = Depends(get_db)):
             product = db.query(Product).filter(Product.id == item.product_id).first()
             if not product:
                 continue
+            
+            product.stock -= item.quantity
 
             license_key = db.query(LicenseKey).filter(
                 LicenseKey.product_id == item.product_id,
@@ -169,6 +171,11 @@ async def capture_order(order_id: str, db: Session = Depends(get_db)):
                 "license_key": license_key.key,
                 "download_link": product.download_link
             })
+            
+            if user:
+                user.current_package = product.name
+                user.license_key = license_keys[-1].key if license_keys else None
+                user.download_link = product.download_link
 
         return JSONResponse(content={
             "transaction_id": transaction_id,

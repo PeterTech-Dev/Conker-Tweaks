@@ -180,3 +180,23 @@
   height: 24px;
   fill: #00e0ff;
 }
+
+.accordion-toggle {
+  background-color: #1a1d2b;
+  color: white;
+  border: none;
+  padding: 10px;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  font-weight: bold;
+  border-bottom: 1px solid #333;
+}
+
+.accordion-content {
+  display: none;
+  background-color: #262837;
+  padding: 10px 20px;
+  border-bottom: 1px solid #444;
+}
+

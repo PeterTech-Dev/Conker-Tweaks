@@ -113,19 +113,19 @@ def protected_route(current_user: User = Depends(get_current_user)):
 
 @auth_router.get("/profile")
 def view_profile(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
-    license = db.query(LicenseKey).filter(
+    licenses = db.query(LicenseKey).filter(
         LicenseKey.assigned_to_email == current_user.email,
         LicenseKey.is_used == True
-    ).first()
+    ).all()
 
-    download_link = None
-    license_key = None
-
-    if license:
-        license_key = license.key
-        product = db.query(Product).filter(Product.id == license.product_id).first()
-        if product:
-            download_link = product.download_link
+    license_data = []
+    for lic in licenses:
+        product = db.query(Product).filter(Product.id == lic.product_id).first()
+        license_data.append({
+            "key": lic.key,
+            "product_name": product.name if product else "Unknown",
+            "download": product.download_link if product else None
+        })
 
     return {
         "id": current_user.id,
@@ -133,11 +133,11 @@ def view_profile(current_user: User = Depends(get_current_user), db: Session = D
         "email": current_user.email,
         "created_at": current_user.created_at,
         "current_package": current_user.current_package,
-        "license_key": license_key,
-        "download_link": download_link,
+        "licenses": license_data,
         "is_admin": current_user.is_admin,
         "has_2fa": current_user.has_2fa,
     }
+
 
 
 @auth_router.post("/profile/update_password")

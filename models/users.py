@@ -14,7 +14,6 @@ class User(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
     is_admin = Column(Boolean, default=False)
     current_package = Column(String, nullable=True)
-    license_key = Column(String, nullable=True)
     is_admin = Column(Boolean, default=False)
     has_2fa = Column(Boolean, default=False)
     twofa_secret = Column(String, nullable=True)
