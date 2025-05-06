@@ -81,7 +81,11 @@ def login_user(user: UserLogin, db: Session = Depends(get_db)):
     if db_user.is_admin and db_user.has_2fa:
         if not user.code:
             raise HTTPException(status_code=401, detail="2FA code required")
+        if not db_user.twofa_secret:
+            raise HTTPException(status_code=500, detail="2FA is enabled but no secret found.")
+    
         totp = pyotp.TOTP(db_user.twofa_secret)
+        print("🔐 Backend Current TOTP:", totp.now())
         if not totp.verify(user.code):
             raise HTTPException(status_code=403, detail="Invalid 2FA code")
 
