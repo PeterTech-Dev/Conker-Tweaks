@@ -78,9 +78,10 @@ def login_user(user: UserLogin, db: Session = Depends(get_db)):
 
     if not verify_password(user.password, db_user.hashed_password):
         raise HTTPException(status_code=401, detail="Invalid email or password")
+
     print("🔐 Stored Secret:", db_user.twofa_secret)
     print("🔐 User Provided Code:", user.code)
-    print("🔐 Backend Current TOTP:", pyotp.TOTP(db_user.twofa_secret).now())
+
     if db_user.is_admin and db_user.has_2fa:
         if not user.code:
             raise HTTPException(status_code=401, detail="2FA code required")
@@ -88,13 +89,14 @@ def login_user(user: UserLogin, db: Session = Depends(get_db)):
             raise HTTPException(status_code=500, detail="2FA is enabled but no secret found.")
         
         totp = pyotp.TOTP(db_user.twofa_secret)
-        print("🔐 Backend Current TOTP:", totp.now())  # ✅ Safe now
+        print("🔐 Backend Current TOTP:", totp.now())
+        
         if not totp.verify(user.code):
             raise HTTPException(status_code=403, detail="Invalid 2FA code")
 
-
     access_token = create_access_token(data={"sub": db_user.email})
     return {"access_token": access_token, "token_type": "bearer"}
+
 
 def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)) -> User:
     try:
