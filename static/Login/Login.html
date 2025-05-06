@@ -50,6 +50,7 @@ Landing/Landing.html"
         <svg class="logo-login" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
           <path fill="#00e0ff" d="M11.24,24a2.262,2.262,0,0,1-.948-.212,2.18,2.18,0,0,1-1.2-2.622L10.653,16H6.975A3,3,0,0,1,4.1,12.131l3.024-10A2.983,2.983,0,0,1,10,0h3.693a2.6,2.6,0,0,1,2.433,3.511L14.443,8H17a3,3,0,0,1,2.483,4.684l-6.4,10.3A2.2,2.2,0,0,1,11.24,24Z"/>
         </svg>
+        <ul id="login-error" class="error-box" style="display: none;"></ul>
         <h2>Login to Conker Tweaks</h2>
         <ul id="login-error" class="error-box" style="display: none;"></ul>
         <form id="loginForm">
@@ -66,10 +67,10 @@ Landing/Landing.html"
         </form>
       </div>
       <div class="register-box" id="registerBox">
-        <ul id="register-error" class="error-box" style="display: none;"></ul>
         <svg class="logo-login" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
           <path fill="#00e0ff" d="M11.24,24a2.262,2.262,0,0,1-.948-.212,2.18,2.18,0,0,1-1.2-2.622L10.653,16H6.975A3,3,0,0,1,4.1,12.131l3.024-10A2.983,2.983,0,0,1,10,0h3.693a2.6,2.6,0,0,1,2.433,3.511L14.443,8H17a3,3,0,0,1,2.483,4.684l-6.4,10.3A2.2,2.2,0,0,1,11.24,24Z"/>
         </svg>
+        <ul id="register-error" class="error-box" style="display: none;"></ul>
         <h2>Create an Account</h2>
         <form id="registerForm">
           <input type="text" id="username" placeholder="Username" required />
@@ -102,6 +103,14 @@ function toggleForms(event) {
   loginBox.classList.toggle('hidden');
   registerBox.classList.toggle('active');
 }
+
+const loginErrorBox = document.getElementById('login-error');
+
+function showLoginError(message) {
+  loginErrorBox.innerHTML = `<li>${message}</li>`;
+  loginErrorBox.style.display = 'block';
+}
+
 let pendingLogin = null;
 
 document.getElementById('loginForm').addEventListener('submit', async function (e) {
@@ -124,7 +133,7 @@ document.getElementById('loginForm').addEventListener('submit', async function (
       data = JSON.parse(rawText);
     } catch {
       console.error("Raw response (not JSON):", rawText);
-      alert("Something went wrong on the server.");
+      showLoginError("Something went wrong on the server.");
       return;
     }
 
@@ -134,7 +143,7 @@ document.getElementById('loginForm').addEventListener('submit', async function (
         document.getElementById('twofa-modal').style.display = 'flex';
         return;
       } else {
-        alert(data.detail || "Login failed.");
+        showLoginError(data.detail || "Login failed.");
         return;
       }
     }
@@ -143,7 +152,7 @@ document.getElementById('loginForm').addEventListener('submit', async function (
     finishLogin(data.access_token);
 
   } catch (err) {
-    alert("Something went wrong during login.");
+    showLoginError("Something went wrong during login.");
     console.error(err);
   }
 });
@@ -152,7 +161,7 @@ async function submit2FACode() {
   const code = document.getElementById('modal-2fa-code').value;
 
   if (!pendingLogin) {
-    alert("Please try logging in again.");
+    showLoginError("Please try logging in again.");
     return;
   }
 
@@ -166,14 +175,14 @@ async function submit2FACode() {
     const data = await res.json();
 
     if (!res.ok) {
-      alert(data.detail || "2FA verification failed.");
+      showLoginError(data.detail || "2FA verification failed.");
       return;
     }
 
     finishLogin(data.access_token);
 
   } catch (err) {
-    alert("2FA failed.");
+    showLoginError("2FA failed.");
     console.error(err);
   }
 }
@@ -194,6 +203,20 @@ async function finishLogin(token) {
   }
 }
 
+function showRegisterError(message, type = "error") {
+  const box = document.getElementById('register-error');
+  box.innerHTML = `<li>${message}</li>`;
+  box.style.display = 'block';
+
+  if (type === "success") {
+    box.classList.remove('error-box');
+    box.classList.add('success-box');
+  } else {
+    box.classList.remove('success-box');
+    box.classList.add('error-box');
+  }
+}
+
 // 🧠 Register form
 document.getElementById('registerForm').addEventListener('submit', async function (e) {
   e.preventDefault();
@@ -206,7 +229,7 @@ document.getElementById('registerForm').addEventListener('submit', async functio
   registerError.style.display = 'none';
 
   if (password !== confirmPassword) {
-    alert('Passwords do not match.');
+    showRegisterError('Passwords do not match.');
     return;
   }
 
@@ -233,16 +256,15 @@ document.getElementById('registerForm').addEventListener('submit', async functio
 
       registerError.style.display = 'block';
     } else {
-      alert('Registration successful! Please login.');
+      showRegisterError('Registration successful! Please login.', 'success');
       window.location.reload();
     }
   } catch (error) {
     console.error('Registration error:', error);
-    alert('Something went wrong. Please try again.');
+    showRegisterError('Something went wrong. Please try again.');
   }
 });
 </script>
 </body>
 </html>
 <!-- Website developed by Your Name - https://github.com/PeterTech-Dev -->
-

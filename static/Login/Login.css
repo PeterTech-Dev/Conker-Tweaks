@@ -285,6 +285,32 @@
   color: #ff0033;
 }
 
+.success-box {
+  background: rgba(0, 255, 127, 0.12);
+  border-left: 4px solid #00cc66;
+  color: #b3ffcc;
+  list-style: none;
+  padding: 15px;
+  margin-bottom: 20px;
+  font-size: 0.95rem;
+  border-radius: 10px;
+  text-align: left;
+  animation: fadeSuccess 0.3s ease-in-out;
+  max-width: 100%;
+  box-shadow: 0 0 10px rgba(0, 255, 127, 0.15);
+}
+
+@keyframes fadeSuccess {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.success-box li::before {
+  content: "✔ ";
+  color: #00cc66;
+}
+
+
 .modal-blur {
   position: fixed;
   top: 0; left: 0;
