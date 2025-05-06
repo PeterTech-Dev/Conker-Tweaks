@@ -55,7 +55,10 @@ def register_user(user: UserCreate, db: Session = Depends(get_db)):
         new_user = User(
             username=user.username,
             email=user.email,
-            hashed_password=hashed_password
+            hashed_password=hashed_password,
+            is_admin=False,
+            has_2fa=False,
+            twofa_secret=None
         )
 
         db.add(new_user)
@@ -83,11 +86,12 @@ def login_user(user: UserLogin, db: Session = Depends(get_db)):
             raise HTTPException(status_code=401, detail="2FA code required")
         if not db_user.twofa_secret:
             raise HTTPException(status_code=500, detail="2FA is enabled but no secret found.")
-    
+        
         totp = pyotp.TOTP(db_user.twofa_secret)
-        print("🔐 Backend Current TOTP:", totp.now())
+        print("🔐 Backend Current TOTP:", totp.now())  # ✅ Safe now
         if not totp.verify(user.code):
             raise HTTPException(status_code=403, detail="Invalid 2FA code")
+
 
     access_token = create_access_token(data={"sub": db_user.email})
     return {"access_token": access_token, "token_type": "bearer"}
