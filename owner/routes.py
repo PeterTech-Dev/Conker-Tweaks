@@ -185,3 +185,21 @@ def update_product(
     db.refresh(product)
 
     return {"message": "Product updated successfully", "product": product}
+
+@owner_router.get("/admin/debug-purchases")
+def debug_purchases(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    is_admin(current_user)
+    purchases = db.query(Purchase).all()
+    return {
+        "count": len(purchases),
+        "details": [
+            {
+                "id": p.id,
+                "user_id": p.user_id,
+                "product_id": p.product_id,
+                "amount": p.amount_paid,
+                "license": p.license_key
+            }
+            for p in purchases
+        ]
+    }
