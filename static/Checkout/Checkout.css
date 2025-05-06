@@ -16,25 +16,27 @@ h1, h2 {
 }
 
 #payment-methods {
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
 }
 
 #payment-methods button {
-  background-color: #00e0ff;
+  background-color: #00b8cc;
+}
+
+#payment-methods button,
+#paypal-button-container > div {
   color: white;
   border: none;
   padding: 15px 30px;
-  margin: 10px;
   border-radius: 12px;
-  cursor: pointer;
   font-size: 1rem;
-  position: relative;
-  width: 100%;
+  width: 320px;
   box-sizing: border-box;
-  border: none;
-  vertical-align: top;
-  cursor: pointer;
-  overflow: hidden;
+  text-align: center;
 }
 
 #payment-methods button:hover {
@@ -42,11 +44,5 @@ h1, h2 {
 }
 
 #paypal-button-container {
-  text-align: center;
-  margin-top: 20px;
-  box-shadow: 0 0 20px rgba(0, 207, 255, 0.3);
-}
-
-.paypal-button.paypal-button-color-blue, .paypal-button-row.paypal-button-color-blue .menu-button {
-  background: #00b8cc;
+  width: 320px;
 }
