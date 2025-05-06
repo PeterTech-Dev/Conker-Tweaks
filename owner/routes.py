@@ -9,6 +9,8 @@ from models.users import User
 from models.products import Product
 from models.purchases import Purchase
 from models.order_items import OrderItem
+from fastapi.responses import JSONResponse
+from sqlalchemy.orm import joinedload
 
 owner_router = APIRouter()
 
@@ -98,9 +100,31 @@ def get_all_products(db: Session = Depends(get_db)):
     return products
 
 @owner_router.get("/admin/purchases")
-def get_all_purchases(db: Session = Depends(get_db)):
-    purchases = db.query(Purchase).all()
-    return purchases
+def get_all_purchases(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    is_admin(current_user)
+
+    purchases = (
+        db.query(Purchase)
+        .options(
+            joinedload(Purchase.user),     # Assuming Purchase.user = relationship("User")
+            joinedload(Purchase.product)   # Assuming Purchase.product = relationship("Product")
+        )
+        .all()
+    )
+
+    response = []
+    for p in purchases:
+        response.append({
+            "purchase_id": p.id,
+            "user_email": p.user.email if p.user else "N/A",
+            "product_name": p.product.name if p.product else "N/A",
+            "license_key": p.license_key,
+            "amount_paid": p.amount_paid,
+            "timestamp": p.timestamp.isoformat()
+        })
+
+    return JSONResponse(content=response)
+
 
 @owner_router.post("/add_product")
 def add_product(product: ProductCreate, db: Session = Depends(get_db)):

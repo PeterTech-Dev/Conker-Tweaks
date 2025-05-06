@@ -216,7 +216,7 @@ async function payWithStripe() {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`
       },
-      body: JSON.stringify({ cart })  // ✅ no email needed
+      body: JSON.stringify({ cart })
     });
 
     const data = await response.json();
@@ -237,7 +237,8 @@ paypal.Buttons({
     layout: 'horizontal',
     color:  'blue',
     shape:  'pill',
-    label:  'pay',
+    label:  'paypal',
+    tagline: 'false',
     borderRadius: 12,
     height: 45
   },

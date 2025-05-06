@@ -215,5 +215,38 @@ window.editProduct = function (id, name, description, price, stock, link, needsL
     });
 };
 
+fetch("https://conker-tweaks-production.up.railway.app/owner/admin/purchases", {
+  headers: { "Authorization": "Bearer " + token }
+})
+  .then(res => res.json())
+  .then(purchases => {
+    const purchaseList = document.getElementById("purchase-list");
+    purchaseList.innerHTML = `
+      <table class="purchase-table">
+        <thead>
+          <tr>
+            <th>User ID</th>
+            <th>Product ID</th>
+            <th>License Key</th>
+            <th>Amount Paid</th>
+            <th>Timestamp</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${purchases.map(p => `
+            <tr>
+              <td>${p.user_id}</td>
+              <td>${p.product_id}</td>
+              <td>${p.license_key || "N/A"}</td>
+              <td>$${p.amount_paid.toFixed(2)}</td>
+              <td>${new Date(p.timestamp).toLocaleString()}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    `;
+  });
+
+
 
 

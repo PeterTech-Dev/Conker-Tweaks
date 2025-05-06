@@ -2,7 +2,7 @@ from sqlalchemy import Column, Integer, String, DateTime
 from datetime import datetime
 from database import Base
 from sqlalchemy import Boolean
-
+from sqlalchemy.orm import relationship
 
 class User(Base):
     __tablename__ = "users"
@@ -17,3 +17,5 @@ class User(Base):
     is_admin = Column(Boolean, default=False)
     has_2fa = Column(Boolean, default=False)
     twofa_secret = Column(String, nullable=True)
+    
+    purchases = relationship("Purchase", back_populates="user") 

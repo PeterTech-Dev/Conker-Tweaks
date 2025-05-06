@@ -124,3 +124,40 @@
 #add-product-form button:hover {
   background-color: #00bcd4;
 }
+
+/* Purchases table */
+#purchase-list {
+  overflow-x: auto;
+}
+
+.purchase-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #1d1e22;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 224, 255, 0.15);
+  overflow: hidden;
+  color: #fff;
+  font-size: 15px;
+}
+
+.purchase-table th, .purchase-table td {
+  padding: 12px 16px;
+  border: 1px solid #2a2e35;
+  text-align: left;
+}
+
+.purchase-table th {
+  background-color: #00e0ff;
+  color: #000;
+  font-weight: 700;
+}
+
+.purchase-table tr:nth-child(even) {
+  background-color: #2a2e35;
+}
+
+.purchase-table tr:hover {
+  background-color: #2f343d;
+}
+

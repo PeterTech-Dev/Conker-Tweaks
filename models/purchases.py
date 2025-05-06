@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, Float, DateTime
 from sqlalchemy.sql import func
 from database import Base
+from sqlalchemy.orm import relationship
 
 class Purchase(Base):
     __tablename__ = "purchases"
@@ -11,3 +12,7 @@ class Purchase(Base):
     license_key = Column(String, nullable=True)
     amount_paid = Column(Float, nullable=False)
     timestamp = Column(DateTime(timezone=True), server_default=func.now())
+
+    user = relationship("User", back_populates="purchases")
+    product = relationship("Product", back_populates="purchases")
+
