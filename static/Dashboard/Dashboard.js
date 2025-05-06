@@ -220,32 +220,40 @@ fetch("https://conker-tweaks-production.up.railway.app/owner/admin/purchases", {
 })
   .then(res => res.json())
   .then(purchases => {
-    const purchaseList = document.getElementById("purchase-list");
-    purchaseList.innerHTML = `
-      <table class="purchase-table">
-        <thead>
+    const container = document.getElementById("purchase-list");
+    if (!purchases.length) {
+      container.innerHTML = "<p>No purchases found.</p>";
+      return;
+    }
+
+    let html = `<table class="purchase-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>User ID</th>
+          <th>Product ID</th>
+          <th>License</th>
+          <th>Amount</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${purchases.map(p => `
           <tr>
-            <th>User ID</th>
-            <th>Product ID</th>
-            <th>License Key</th>
-            <th>Amount Paid</th>
-            <th>Timestamp</th>
+            <td>${p.id}</td>
+            <td>${p.user_id}</td>
+            <td>${p.product_id}</td>
+            <td>${p.license_key ?? "-"}</td>
+            <td>$${p.amount_paid.toFixed(2)}</td>
+            <td>${new Date(p.timestamp).toLocaleString()}</td>
           </tr>
-        </thead>
-        <tbody>
-          ${purchases.map(p => `
-            <tr>
-              <td>${p.user_id}</td>
-              <td>${p.product_id}</td>
-              <td>${p.license_key || "N/A"}</td>
-              <td>$${p.amount_paid.toFixed(2)}</td>
-              <td>${new Date(p.timestamp).toLocaleString()}</td>
-            </tr>
-          `).join('')}
-        </tbody>
-      </table>
-    `;
+        `).join("")}
+      </tbody>
+    </table>`;
+
+    container.innerHTML = html;
   });
+
 
 
 
