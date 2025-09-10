@@ -44,7 +44,6 @@ A Python-powered web app for product management and orders with user auth and a 
 ├── requirements.txt    # dependencies
 └── start.py            # convenience runner
 ```
-> Your tree may evolve; update this diagram as you refactor.
 
 ---
 
@@ -110,15 +109,6 @@ pytest -q
 - Replace SQLite with a hosted DB by changing `DATABASE_URL` and updating your DB client/ORM.
 - If you use reCAPTCHA, ensure keys are set and network access is allowed.
 - Static files are served from `static/`; see **License** below for attribution requirements.
-
----
-
-## 📸 Screenshots
-Place screenshots under `docs/` and reference them here:
-```md
-![Home](docs/home.png)
-![Orders](docs/orders.png)
-```
 
 ---
 
