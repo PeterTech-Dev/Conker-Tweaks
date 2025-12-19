@@ -1,5 +1,5 @@
 # Conker Tweaks
-A Python-powered web app for product management and orders with user auth and a clean UI. This README is a starting point tailored from your repo layout (see folders below).
+A Python-powered web app for product management and orders with user auth and a clean UI.
 
 > **Licensing note:** The **code** is MIT-licensed. All **design & visual assets** (HTML layouts, CSS, images, logos, screenshots, and other UI/UX artwork) are licensed under **CC BY 4.0** — reuse is allowed **with attribution**. See [LICENSE](./LICENSE) and [LICENSE-DESIGN.md](./LICENSE-DESIGN.md).
 
