@@ -1,144 +1,321 @@
+/* ====== Admin Dashboard (Upgraded) ====== */
+
+:root {
+  --bg: #0b0c10;
+  --panel: #14161b;
+  --panel-2: #1b1f26;
+  --text: #ffffff;
+  --muted: rgba(255,255,255,0.7);
+  --muted2: rgba(255,255,255,0.55);
+  --accent: #00e0ff;
+  --accent2: #00bcd4;
+  --border: rgba(255,255,255,0.12);
+  --shadow: 0 0 0 1px rgba(0,224,255,0.16), 0 18px 40px rgba(0,0,0,0.45);
+  --shadow-soft: 0 0 0 1px rgba(255,255,255,0.08), 0 16px 34px rgba(0,0,0,0.4);
+}
+
 #admin-main {
   display: none; /* shown after auth passes */
-  padding: 40px 20px;
-  max-width: 1000px;
+  padding: 56px 18px 80px;
+  max-width: 1180px;
   margin: 0 auto;
-  font-family: 'Outfit', sans-serif;
-  color: #fff;
+  font-family: "Outfit", sans-serif;
+  color: var(--text);
 }
 
 #admin-main h1 {
-  font-size: 36px;
-  margin-bottom: 30px;
+  font-size: clamp(32px, 3vw, 44px);
+  margin: 0 0 26px;
   text-align: center;
-  color: #00e0ff;
+  color: var(--accent);
+  letter-spacing: 0.02em;
+  text-shadow: 0 0 18px rgba(0,224,255,0.25);
 }
 
 #admin-main h2 {
-  font-size: 24px;
-  margin-top: 40px;
-  margin-bottom: 20px;
-  color: #00e0ff;
+  font-size: 22px;
+  margin: 42px 0 16px;
+  color: var(--accent);
+  letter-spacing: 0.02em;
 }
 
+/* Container layout */
 #dashboard-container {
   display: flex;
   flex-direction: column;
-  gap: 30px;
+  gap: 26px;
 }
 
-/* Stats section */
+/* ====== Stats ====== */
 #stats {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+@media (max-width: 860px) {
+  #stats {
+    grid-template-columns: 1fr;
+  }
 }
 
 #stats .card {
-  background: #1d1e22;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 224, 255, 0.2);
-  min-width: 180px;
-  text-align: center;
+  background: linear-gradient(180deg, var(--panel), #0f1116);
+  border: 1px solid var(--border);
+  padding: 18px 18px;
+  border-radius: 16px;
+  box-shadow: var(--shadow-soft);
+  text-align: left;
+  position: relative;
+  overflow: hidden;
+}
+
+#stats .card::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  background: radial-gradient(600px 180px at 20% 0%, rgba(0,224,255,0.14), transparent 55%);
+  pointer-events: none;
+}
+
+#stats .card strong {
+  display: block;
+  font-size: 13px;
+  color: var(--muted2);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+#stats .card span,
+#stats .card {
   font-size: 18px;
 }
 
-/* Product cards */
+/* ====== Product grid ====== */
 #product-list {
   display: grid;
-  gap: 20px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
 }
 
-#product-list .card {
-  background: #1d1e22;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 224, 255, 0.2);
-  line-height: 1.6;
+@media (max-width: 900px) {
+  #product-list {
+    grid-template-columns: 1fr;
+  }
 }
 
-#product-list .card button {
+/* Your JS uses "pricing-card". Keep support for both. */
+#product-list .card,
+#product-list .pricing-card {
+  background: linear-gradient(180deg, var(--panel), #0f1116);
+  border: 1px solid rgba(0,224,255,0.18);
+  padding: 18px;
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+  line-height: 1.55;
+  position: relative;
+  overflow: hidden;
+}
+
+#product-list .card::before,
+#product-list .pricing-card::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  background:
+    radial-gradient(700px 220px at 0% 0%, rgba(0,224,255,0.18), transparent 55%),
+    radial-gradient(700px 220px at 100% 100%, rgba(0,224,255,0.10), transparent 60%);
+  pointer-events: none;
+}
+
+#product-list h3 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+}
+
+#product-list .price {
+  margin: 10px 0 6px;
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--accent);
+  text-shadow: 0 0 16px rgba(0,224,255,0.18);
+}
+
+#product-list .stock-available {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.04);
+  color: var(--muted);
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+
+#product-list ul {
+  margin: 10px 0 14px;
+  padding-left: 18px;
+  color: rgba(255,255,255,0.82);
+}
+
+#product-list ul li {
+  margin: 6px 0;
+}
+
+/* Buttons on cards */
+#product-list button {
   margin-top: 10px;
   margin-right: 10px;
-  padding: 6px 12px;
-  background-color: #00e0ff;
-  color: black;
-  border: none;
-  border-radius: 6px;
+  padding: 10px 12px;
+  background: var(--accent);
+  color: #001219;
+  border: 1px solid rgba(0,224,255,0.35);
+  border-radius: 12px;
   cursor: pointer;
-  transition: background 0.3s ease;
+  transition: transform 0.15s ease, background 0.2s ease, box-shadow 0.2s ease;
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: 0.02em;
 }
 
-#product-list .card button:hover {
-  background-color: #00bcd4;
+#product-list button:hover {
+  background: var(--accent2);
+  box-shadow: 0 0 0 3px rgba(0,224,255,0.15);
+  transform: translateY(-1px);
 }
 
-/* Add product form */
+#product-list button:active {
+  transform: translateY(0);
+}
+
+/* Optional: make destructive action look different */
+#product-list button:nth-of-type(2) {
+  background: rgba(255, 80, 80, 0.92);
+  border-color: rgba(255,80,80,0.35);
+  color: #0b0c10;
+}
+#product-list button:nth-of-type(2):hover {
+  background: rgba(255, 60, 60, 1);
+  box-shadow: 0 0 0 3px rgba(255,80,80,0.15);
+}
+
+/* ====== Add product form ====== */
 #add-product-form {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  background: #1d1e22;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 224, 255, 0.15);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  background: linear-gradient(180deg, var(--panel-2), #0f1116);
+  padding: 18px;
+  border-radius: 18px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-soft);
+}
+
+@media (max-width: 900px) {
+  #add-product-form {
+    grid-template-columns: 1fr;
+  }
 }
 
 #add-product-form input,
-#add-product-form label {
-  font-size: 16px;
-  color: #fff;
-}
-
-#add-product-form input {
-  padding: 10px;
-  border: none;
-  border-radius: 6px;
-  background: #2a2e35;
-  color: #fff;
+#add-product-form textarea {
+  padding: 12px 12px;
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 12px;
+  background: rgba(255,255,255,0.06);
+  color: var(--text);
+  font-size: 15px;
+  outline: none;
 }
 
 #add-product-form textarea {
-  padding: 10px;
-  border: none;
-  border-radius: 6px;
-  background: #2a2e35;
-  color: #fff;
-  font-size: 16px;
+  min-height: 130px;
+  resize: vertical;
 }
 
+#add-product-form input:focus,
+#add-product-form textarea:focus {
+  border-color: rgba(0,224,255,0.4);
+  box-shadow: 0 0 0 3px rgba(0,224,255,0.12);
+}
+
+#add-product-form label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: rgba(255,255,255,0.78);
+  padding: 8px 10px;
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 12px;
+  background: rgba(255,255,255,0.03);
+}
+
+#add-product-form input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+}
+
+/* Force some elements to span full width */
+#add-product-form textarea,
+#add-product-form button,
+#add-product-form h2,
+#purchase-list {
+  grid-column: 1 / -1;
+}
 
 #add-product-form button {
-  background-color: #00e0ff;
-  color: black;
-  padding: 10px;
-  font-weight: bold;
-  border: none;
-  border-radius: 6px;
+  background: var(--accent);
+  color: #001219;
+  padding: 12px 14px;
+  font-weight: 900;
+  border: 1px solid rgba(0,224,255,0.35);
+  border-radius: 14px;
   cursor: pointer;
-  transition: background 0.3s ease;
+  transition: transform 0.15s ease, background 0.2s ease, box-shadow 0.2s ease;
+  letter-spacing: 0.02em;
 }
 
 #add-product-form button:hover {
-  background-color: #00bcd4;
+  background: var(--accent2);
+  box-shadow: 0 0 0 3px rgba(0,224,255,0.15);
+  transform: translateY(-1px);
 }
 
+/* ====== Purchases list ====== */
 #purchase-list {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+@media (max-width: 900px) {
+  #purchase-list {
+    grid-template-columns: 1fr;
+  }
 }
 
 #purchase-list .card {
-  background: #1d1e22;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 224, 255, 0.15);
-  color: #fff;
+  background: linear-gradient(180deg, var(--panel), #0f1116);
+  border: 1px solid rgba(255,255,255,0.12);
+  padding: 16px;
+  border-radius: 16px;
+  box-shadow: var(--shadow-soft);
+  color: rgba(255,255,255,0.86);
   line-height: 1.6;
-  font-size: 15px;
+  font-size: 14px;
 }
 
+#purchase-list .card strong {
+  color: rgba(255,255,255,0.95);
+}
 
+/* Small quality-of-life */
+* {
+  box-sizing: border-box;
+}
